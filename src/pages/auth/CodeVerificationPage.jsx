@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { ArrowRightIcon, ArrowLeftIcon } from "@heroicons/react/24/solid";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { useAlert } from "../../components/AlertBox";
 import axios from "axios";
 import Loader from "../Loader";
 
@@ -10,7 +9,6 @@ export default function CodeVerificationAuthPage() {
   const [loading, setLoading] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
-  const { showAlert } = useAlert();
 
   const number = location.state?.number;
 

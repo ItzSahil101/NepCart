@@ -4,7 +4,7 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import Navbar from "./components/Navbar";
 import Footer from "./pages/Footer";
 import Home from "./pages/Home";
-import CodeVerificationPage from "./pages/auth/CodeVerificationPage";
+import CodeVerificationAuthPage from "./pages/auth/CodeVerificationPage";
 import SignupPage from "./pages/auth/SignupPage";
 import LoginPage from "./pages/auth/LoginPage";
 import Profile from "./pages/Profile";
@@ -46,9 +46,9 @@ const App = () => {
         <Route
           path="/verify"
           element={
-            <ProtectedRoute>
-              <CodeVerificationPage />
-            </ProtectedRoute>
+            <PublicRoute>
+              <CodeVerificationAuthPage />
+           </PublicRoute>
           }
         />
           <Route
