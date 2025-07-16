@@ -320,7 +320,9 @@ const Profile = () => {
               )}
               {canCancel ? (
                 cancellingOrderId === order.orderId ? (
-                  <Loader /> // ✅ Show loader only for the specific order
+                  <>
+                    <Loader /> {/* ✅ Show loader only for the specific order */}
+                  </>
                 ) : (
                   <button
                     onClick={() =>
@@ -346,6 +348,7 @@ const Profile = () => {
     )}
   </div>
 </div>
+
 
       {/* Bottom Grid */}
       <div className="mt-10 grid grid-cols-1 md:grid-cols-2 gap-10 items-start">
