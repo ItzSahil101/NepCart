@@ -23,6 +23,7 @@ const Profile = () => {
   const [showModal, setShowModal] = useState(false);
   const [cancelTimers, setCancelTimers] = useState({}); // { orderId: secondsLeft }
   const [cancellingOrderId, setCancellingOrderId] = useState(null);
+  const [loadingOrders, setLoadingOrders] = useState(true);
 
   // Fetch user and orders, also fetch top users
   useEffect(() => {
@@ -48,6 +49,7 @@ const Profile = () => {
 
     const fetchUserAndOrders = async () => {
       try {
+        setLoadingOrders(true);
         const user = await getUserFromCookie();
         if (!user) return;
         setLoggedInUser(user);
@@ -87,7 +89,9 @@ const Profile = () => {
         setOrders([...normalOrders, ...customOrders]);
       } catch (err) {
         console.error("Error fetching user or orders:", err);
-      }
+      }finally {
+    setLoadingOrders(false); // Stop loading regardless of success/failure
+  }
     };
 
     fetchUserAndOrders();
@@ -255,92 +259,93 @@ const Profile = () => {
         </div>
 
         {/* RIGHT - Order Tracker */}
-        <div className="col-span-2 bg-gray-50 p-6 rounded-2xl shadow-md">
-          <h3 className="text-lg font-semibold text-orange-500 mb-4">
-            Order Tracking
-          </h3>
-          <div className="space-y-4">
-            {orders.length === 0 ? (
-              <p>No orders found.</p>
-            ) : (
-              orders.map((order, i) => {
-                const timeLeft = cancelTimers[order.orderId] ?? 0;
-                const canCancel = order.status !== "Cancelled" && timeLeft > 0;
+<div className="col-span-2 bg-gray-50 p-6 rounded-2xl shadow-md">
+  <h3 className="text-lg font-semibold text-orange-500 mb-4">
+    Order Tracking
+  </h3>
+  <div className="space-y-4">
+    {loadingOrders ? (
+      <p className="text-center text-gray-500">Loading orders...</p>
+    ) : orders.length === 0 ? (
+      <p>No orders found.</p>
+    ) : (
+      orders.map((order, i) => {
+        const timeLeft = cancelTimers[order.orderId] ?? 0;
+        const canCancel = order.status !== "Cancelled" && timeLeft > 0;
 
-                return (
-                  <div
-                    key={`${order.orderId}-${i}`}
-                    className={`flex items-center justify-between p-4 rounded-xl border shadow-sm transition-all ${
-                      order.status === "Cancelled"
-                        ? "bg-red-100 hover:bg-red-200"
-                        : "bg-white hover:bg-blue-50"
-                    }`}
+        return (
+          <div
+            key={`${order.orderId}-${i}`}
+            className={`flex items-center justify-between p-4 rounded-xl border shadow-sm transition-all ${
+              order.status === "Cancelled"
+                ? "bg-red-100 hover:bg-red-200"
+                : "bg-white hover:bg-blue-50"
+            }`}
+          >
+            <div>
+              <h4
+                className="font-semibold text-lg text-blue-600 cursor-pointer underline"
+                onClick={() => openPreview(order)}
+              >
+                {order.productId?.name || "Unnamed Product"}
+              </h4>
+              <p className="text-sm">
+                Status:{" "}
+                <span className="font-medium">{order.status}</span>
+              </p>
+              <p className="text-sm">
+                id: <span className="font-medium">{order.orderId}</span>
+              </p>
+              {canCancel && (
+                <p className="text-sm text-gray-500">
+                  Time left to cancel:{" "}
+                  <span className="font-semibold">
+                    {formatTime(timeLeft)}
+                  </span>
+                </p>
+              )}
+              {!canCancel && order.status !== "Cancelled" && (
+                <p className="text-sm text-red-500 font-semibold">
+                  Can't Cancel
+                </p>
+              )}
+            </div>
+            <div className="flex gap-4 items-center">
+              {order.status === "Cancelled" ? (
+                <FaTimesCircle className="text-red-500 text-xl" />
+              ) : order.status === "Delivered" ? (
+                <FaCheckCircle className="text-green-500 text-xl" />
+              ) : (
+                <FaTruck className="text-blue-500 text-xl" />
+              )}
+              {canCancel ? (
+                cancellingOrderId === order.orderId ? (
+                  <Loader /> // ✅ Show loader only for the specific order
+                ) : (
+                  <button
+                    onClick={() =>
+                      handleCancelOrder(order.orderId, order.isCustom)
+                    }
+                    className="px-3 py-1 text-sm rounded-md font-semibold transition-all duration-200 bg-orange-500 hover:bg-orange-600 text-white"
                   >
-                    <div>
-                      <h4
-                        className="font-semibold text-lg text-blue-600 cursor-pointer underline"
-                        onClick={() => openPreview(order)}
-                      >
-                        {order.productId?.name || "Unnamed Product"}
-                      </h4>
-                      <p className="text-sm">
-                        Status:{" "}
-                        <span className="font-medium">{order.status}</span>
-                      </p>
-                      <p className="text-sm">
-                        id: <span className="font-medium">{order.orderId}</span>
-                      </p>
-                      {canCancel && (
-                        <p className="text-sm text-gray-500">
-                          Time left to cancel:{" "}
-                          <span className="font-semibold">
-                            {formatTime(timeLeft)}
-                          </span>
-                        </p>
-                      )}
-                      {!canCancel && order.status !== "Cancelled" && (
-                        <p className="text-sm text-red-500 font-semibold">
-                          Can't Cancel
-                        </p>
-                      )}
-                    </div>
-                    <div className="flex gap-4 items-center">
-                      {order.status === "Cancelled" ? (
-                        <FaTimesCircle className="text-red-500 text-xl" />
-                      ) : order.status === "Delivered" ? (
-                        <FaCheckCircle className="text-green-500 text-xl" />
-                      ) : (
-                        <FaTruck className="text-blue-500 text-xl" />
-                      )}
-                      {canCancel ? (
-                        cancellingOrderId === order.orderId ? (
-                          <Loader /> // ✅ Show loader only for the specific order
-                        ) : (
-                          <button
-                            onClick={() =>
-                              handleCancelOrder(order.orderId, order.isCustom)
-                            }
-                            className="px-3 py-1 text-sm rounded-md font-semibold transition-all duration-200 bg-orange-500 hover:bg-orange-600 text-white"
-                          >
-                            Cancel Order
-                          </button>
-                        )
-                      ) : (
-                        <button
-                          disabled
-                          className="px-3 py-1 text-sm rounded-md font-semibold bg-gray-400 text-white cursor-not-allowed"
-                        >
-                          Can't Cancel
-                        </button>
-                      )}
-                    </div>
-                  </div>
-                );
-              })
-            )}
+                    Cancel Order
+                  </button>
+                )
+              ) : (
+                <button
+                  disabled
+                  className="px-3 py-1 text-sm rounded-md font-semibold bg-gray-400 text-white cursor-not-allowed"
+                >
+                  Can't Cancel
+                </button>
+              )}
+            </div>
           </div>
-        </div>
-      </div>
+        );
+      })
+    )}
+  </div>
+</div>
 
       {/* Bottom Grid */}
       <div className="mt-10 grid grid-cols-1 md:grid-cols-2 gap-10 items-start">
