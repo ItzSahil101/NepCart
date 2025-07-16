@@ -21,11 +21,10 @@ const Profile = () => {
   const [orders, setOrders] = useState([]);
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [showModal, setShowModal] = useState(false);
-  const [cancelTimers, setCancelTimers] = useState({}); // { orderId: secondsLeft }
+  const [cancelTimers, setCancelTimers] = useState({});
   const [cancellingOrderId, setCancellingOrderId] = useState(null);
   const [loadingOrders, setLoadingOrders] = useState(true);
 
-  // Fetch user and orders, also fetch top users
   useEffect(() => {
     const fetchTopUsers = async () => {
       try {
@@ -89,16 +88,15 @@ const Profile = () => {
         setOrders([...normalOrders, ...customOrders]);
       } catch (err) {
         console.error("Error fetching user or orders:", err);
-      }finally {
-    setLoadingOrders(false); // Stop loading regardless of success/failure
-  }
+      } finally {
+        setLoadingOrders(false);
+      }
     };
 
     fetchUserAndOrders();
     fetchTopUsers();
   }, []);
 
-  // Initialize cancel timers whenever orders update
   useEffect(() => {
     const initializeTimers = () => {
       const now = Date.now();
@@ -120,7 +118,6 @@ const Profile = () => {
     initializeTimers();
   }, [orders]);
 
-  // Update countdown timers every second
   useEffect(() => {
     const interval = setInterval(() => {
       setCancelTimers((prevTimers) => {
@@ -147,14 +144,12 @@ const Profile = () => {
     return () => clearInterval(interval);
   }, []);
 
-  // Format seconds into mm:ss string
   const formatTime = (seconds) => {
     const m = Math.floor(seconds / 60);
     const s = seconds % 60;
     return `${m}:${s.toString().padStart(2, "0")}`;
   };
 
-  // Handle feedback submission
   const handleFeedbackSubmit = async () => {
     if (!feedback.trim()) return alert("Please write something.");
 
@@ -186,13 +181,12 @@ const Profile = () => {
     }
   };
 
-  // Handle order cancellation
   const handleCancelOrder = async (id, isCustom) => {
     const confirmCancel = window.confirm("Are you sure to cancel this order?");
     if (!confirmCancel) return;
 
     try {
-      setCancellingOrderId(id); // Start loader
+      setCancellingOrderId(id);
       const url = isCustom
         ? `https://nepcart-backend.onrender.com/orderc/${id}/cancel`
         : `https://nepcart-backend.onrender.com/purchase/${id}/cancel`;
@@ -202,7 +196,7 @@ const Profile = () => {
       if (res.status === 200) {
         alert("Order cancelled ✅");
         setOrders((prev) => prev.filter((item) => item.orderId !== id));
-        window.location.reload()
+        window.location.reload();
       } else {
         alert(res.data.message || "Cancel failed ❌");
       }
@@ -210,11 +204,10 @@ const Profile = () => {
       console.error("Cancel error:", err);
       alert("Error cancelling order");
     } finally {
-      setCancellingOrderId(null); // Stop loader
+      setCancellingOrderId(null);
     }
   };
 
-  // Open product preview modal
   const openPreview = (product) => {
     setSelectedProduct(product);
     setShowModal(true);
@@ -222,7 +215,6 @@ const Profile = () => {
 
   return (
     <div className="min-h-screen bg-white px-6 py-10 md:px-16 text-gray-800">
-      {/* Header */}
       <div className="mb-10">
         <h1 className="text-4xl font-bold text-orange-500 font-serif tracking-tight drop-shadow-md">
           My Profile 🥴
@@ -232,9 +224,7 @@ const Profile = () => {
         </p>
       </div>
 
-      {/* Main Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-10 items-start">
-        {/* LEFT - Profile Info + Spacer Image */}
         <div className="col-span-1 flex flex-col gap-6">
           <div className="bg-gray-50 p-6 rounded-2xl shadow-md space-y-4">
             <div className="flex items-center gap-4">
@@ -258,101 +248,93 @@ const Profile = () => {
           </div>
         </div>
 
-        {/* RIGHT - Order Tracker */}
-<div className="col-span-2 bg-gray-50 p-6 rounded-2xl shadow-md">
-  <h3 className="text-lg font-semibold text-orange-500 mb-4">
-    Order Tracking
-  </h3>
-  <div className="space-y-4">
-    {loadingOrders ? (
-      <p className="text-center text-gray-500">Loading orders...</p>
-    ) : orders.length === 0 ? (
-      <p>No orders found.</p>
-    ) : (
-      orders.map((order, i) => {
-        const timeLeft = cancelTimers[order.orderId] ?? 0;
-        const canCancel = order.status !== "Cancelled" && timeLeft > 0;
+        <div className="col-span-2 bg-gray-50 p-6 rounded-2xl shadow-md">
+          <h3 className="text-lg font-semibold text-orange-500 mb-4">
+            Order Tracking
+          </h3>
+          <div className="space-y-4">
+            {loadingOrders ? (
+              <p className="text-center text-gray-500">Loading orders...</p>
+            ) : orders.length === 0 ? (
+              <p>No orders found.</p>
+            ) : (
+              orders.map((order, i) => {
+                const timeLeft = cancelTimers[order.orderId] ?? 0;
+                const canCancel = order.status !== "Cancelled" && timeLeft > 0;
 
-        return (
-          <div
-            key={`${order.orderId}-${i}`}
-            className={`flex items-center justify-between p-4 rounded-xl border shadow-sm transition-all ${
-              order.status === "Cancelled"
-                ? "bg-red-100 hover:bg-red-200"
-                : "bg-white hover:bg-blue-50"
-            }`}
-          >
-            <div>
-              <h4
-                className="font-semibold text-lg text-blue-600 cursor-pointer underline"
-                onClick={() => openPreview(order)}
-              >
-                {order.productId?.name || "Unnamed Product"}
-              </h4>
-              <p className="text-sm">
-                Status:{" "}
-                <span className="font-medium">{order.status}</span>
-              </p>
-              <p className="text-sm">
-                id: <span className="font-medium">{order.orderId}</span>
-              </p>
-              {canCancel && (
-                <p className="text-sm text-gray-500">
-                  Time left to cancel:{" "}
-                  <span className="font-semibold">
-                    {formatTime(timeLeft)}
-                  </span>
-                </p>
-              )}
-              {!canCancel && order.status !== "Cancelled" && (
-                <p className="text-sm text-red-500 font-semibold">
-                  Can't Cancel
-                </p>
-              )}
-            </div>
-            <div className="flex gap-4 items-center">
-              {order.status === "Cancelled" ? (
-                <FaTimesCircle className="text-red-500 text-xl" />
-              ) : order.status === "Delivered" ? (
-                <FaCheckCircle className="text-green-500 text-xl" />
-              ) : (
-                <FaTruck className="text-blue-500 text-xl" />
-              )}
-              {canCancel ? (
-                cancellingOrderId === order.orderId ? (
-                  <>
-                    <Loader /> {/* ✅ Show loader only for the specific order */}
-                  </>
-                ) : (
-                  <button
-                    onClick={() =>
-                      handleCancelOrder(order.orderId, order.isCustom)
-                    }
-                    className="px-3 py-1 text-sm rounded-md font-semibold transition-all duration-200 bg-orange-500 hover:bg-orange-600 text-white"
+                return (
+                  <div
+                    key={`${order.orderId}-${i}`}
+                    className={`flex items-center justify-between p-4 rounded-xl border shadow-sm transition-all ${
+                      order.status === "Cancelled"
+                        ? "bg-red-100 hover:bg-red-200"
+                        : "bg-white hover:bg-blue-50"
+                    }`}
                   >
-                    Cancel Order
-                  </button>
-                )
-              ) : (
-                <button
-                  disabled
-                  className="px-3 py-1 text-sm rounded-md font-semibold bg-gray-400 text-white cursor-not-allowed"
-                >
-                  Can't Cancel
-                </button>
-              )}
-            </div>
+                    <div>
+                      <h4
+                        className="font-semibold text-lg text-blue-600 cursor-pointer underline"
+                        onClick={() => openPreview(order)}
+                      >
+                        {order.productId?.name || "Unnamed Product"}
+                      </h4>
+                      <p className="text-sm">
+                        Status: <span className="font-medium">{order.status}</span>
+                      </p>
+                      <p className="text-sm">
+                        id: <span className="font-medium">{order.orderId}</span>
+                      </p>
+                      {canCancel && (
+                        <p className="text-sm text-gray-500">
+                          Time left to cancel:{" "}
+                          <span className="font-semibold">{formatTime(timeLeft)}</span>
+                        </p>
+                      )}
+                      {!canCancel && order.status !== "Cancelled" && (
+                        <p className="text-sm text-red-500 font-semibold">Can't Cancel</p>
+                      )}
+                    </div>
+                    <div className="flex gap-4 items-center">
+                      {order.status === "Cancelled" ? (
+                        <FaTimesCircle className="text-red-500 text-xl" />
+                      ) : order.status === "Delivered" ? (
+                        <FaCheckCircle className="text-green-500 text-xl" />
+                      ) : (
+                        <FaTruck className="text-blue-500 text-xl" />
+                      )}
+                      {canCancel ? (
+                        cancellingOrderId === order.orderId ? (
+                          <>
+                            <Loader /> {/* ✅ Show loader only for the specific order */}
+                          </>
+                        ) : (
+                          <button
+                            onClick={() =>
+                              handleCancelOrder(order.orderId, order.isCustom)
+                            }
+                            className="px-3 py-1 text-sm rounded-md font-semibold transition-all duration-200 bg-orange-500 hover:bg-orange-600 text-white"
+                          >
+                            Cancel Order
+                          </button>
+                        )
+                      ) : (
+                        <button
+                          disabled
+                          className="px-3 py-1 text-sm rounded-md font-semibold bg-gray-400 text-white cursor-not-allowed"
+                        >
+                          Can't Cancel
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                );
+              })
+            )}
           </div>
-        );
-      })
-    )}
-  </div>
-</div>
+        </div>
+      </div>
 
-
-      {/* Bottom Grid */}
       <div className="mt-10 grid grid-cols-1 md:grid-cols-2 gap-10 items-start">
-        {/* Top Users */}
         <div className="flex flex-col gap-6">
           <div className="bg-gray-50 p-6 rounded-2xl shadow-md">
             <h3 className="text-lg font-semibold text-blue-500 mb-4">
@@ -368,9 +350,7 @@ const Profile = () => {
               <ul className="space-y-3">
                 {topUsers.map((user, index) => (
                   <li key={index} className="flex justify-between">
-                    <span className="font-medium text-gray-800">
-                      {user.userName}
-                    </span>
+                    <span className="font-medium text-gray-800">{user.userName}</span>
                     <span className="text-sm text-gray-600">
                       {user.purchaseProducts} items
                     </span>
@@ -381,7 +361,6 @@ const Profile = () => {
           </div>
         </div>
 
-        {/* Feedback */}
         <div className="bg-gray-50 p-6 rounded-2xl shadow-md">
           <h3 className="text-lg font-semibold text-blue-500 mb-4">
             Feedback & Suggestions
@@ -402,7 +381,6 @@ const Profile = () => {
         </div>
       </div>
 
-      {/* Modal Preview */}
       {showModal && selectedProduct && (
         <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center px-4">
           <div className="bg-white w-full max-w-md rounded-lg shadow-lg p-6 relative">
@@ -412,9 +390,7 @@ const Profile = () => {
             >
               &times;
             </button>
-            <h2 className="text-2xl font-bold mb-4 text-orange-600">
-              Product Preview
-            </h2>
+            <h2 className="text-2xl font-bold mb-4 text-orange-600">Product Preview</h2>
             {selectedProduct.productId?.url ? (
               <img
                 src={selectedProduct.productId.url}
