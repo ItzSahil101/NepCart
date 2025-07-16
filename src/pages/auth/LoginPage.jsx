@@ -1,4 +1,3 @@
-// AuthPage.jsx
 import React, { useState } from "react";
 import {
   ArrowRightIcon,
