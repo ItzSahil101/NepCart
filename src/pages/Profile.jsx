@@ -251,8 +251,9 @@ const Profile = () => {
         <div className="col-span-2 bg-gray-50 p-6 rounded-2xl shadow-md">
           <h3 className="text-lg font-semibold text-orange-500 mb-4">
             Order Tracking (we will call you soon)
+            <br />
+             25% pay then 75% COD
           </h3>
-          <p>25% pay then 75% COD</p>
           <div className="space-y-4">
             {loadingOrders ? (
               <p className="text-center text-gray-500">Loading orders...</p>
