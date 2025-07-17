@@ -6,12 +6,20 @@ import axios from "axios";
 export default function FeaturedProducts() {
   const [products, setProducts] = useState([]);
   const [selectedProduct, setSelectedProduct] = useState(null); // for modal
+  const [isLoading, setIsLoading] = useState(true); // 👈 New state
 
   useEffect(() => {
+    setIsLoading(true); // start loading
     axios
       .get("https://nepcart-backend.onrender.com/api/product")
-      .then((res) => setProducts(res.data))
-      .catch((err) => console.error("Error fetching products:", err));
+      .then((res) => {
+        setProducts(res.data);
+        setIsLoading(false); // stop loading
+      })
+      .catch((err) => {
+        console.error("Error fetching products:", err);
+        setIsLoading(false); // stop loading even on error
+      });
   }, []);
 
   return (
@@ -22,15 +30,21 @@ export default function FeaturedProducts() {
       >
         <b>Featured Products</b>
       </h2>
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-        {products.map((product) => (
-          <ProductCard
-            key={product._id}
-            product={product}
-            onPreview={setSelectedProduct} // 👈 FIXED: pass this function
-          />
-        ))}
-      </div>
+
+      {/* 👇 Show loading spinner or message */}
+      {isLoading ? (
+        <div className="text-center text-gray-600 py-10">Loading, please wait...</div>
+      ) : (
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+          {products.map((product) => (
+            <ProductCard
+              key={product._id}
+              product={product}
+              onPreview={setSelectedProduct}
+            />
+          ))}
+        </div>
+      )}
 
       {/* ✅ Show modal if product selected */}
       {selectedProduct && (
