@@ -3,6 +3,7 @@ import {
   ArrowRightIcon,
   EyeIcon,
   EyeSlashIcon,
+  XMarkIcon,
 } from "@heroicons/react/24/solid";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
@@ -13,12 +14,14 @@ export default function AuthPage() {
   const [number, setNumber] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
-  const navigate = useNavigate();
-
   const [forgotOpen, setForgotOpen] = useState(false);
-  const [step, setStep] = useState(1); // 1: Phone, 2: OTP, 3: New Password
+  const [step, setStep] = useState(1);
   const [otp, setOtp] = useState(["", "", "", ""]);
   const [newPassword, setNewPassword] = useState("");
+  const navigate = useNavigate();
+
+  const [showVerifyPopup, setShowVerifyPopup] = useState(false);
+  const [unverifiedNumber, setUnverifiedNumber] = useState("");
 
   const handleLogin = async () => {
     if (!number || !password) return alert("Enter both phone & password");
@@ -34,7 +37,13 @@ export default function AuthPage() {
       alert(res.data?.msg || "Login successful");
       navigate("/");
     } catch (err) {
-      alert(err.response?.data?.msg || "Login failed");
+      const msg = err.response?.data?.msg || "Login failed";
+      if (msg.includes("verify")) {
+        setUnverifiedNumber(formattedNumber);
+        setShowVerifyPopup(true);
+      } else {
+        alert(msg);
+      }
     } finally {
       setLoading(false);
     }
@@ -99,16 +108,55 @@ export default function AuthPage() {
     }
   };
 
+  const handleResendOtp = async () => {
+    try {
+      const res = await axios.post("https://nepcart-backend.onrender.com/api/auth/send-otp", {
+        number: unverifiedNumber,
+      });
+      alert(res.data.msg || "OTP sent");
+      navigate("/verify", { state: { number: unverifiedNumber } });
+      setShowVerifyPopup(false);
+    } catch (err) {
+      alert(err.response?.data?.msg || "Failed to send OTP");
+    }
+  };
+
   return (
     <>
       {loading && <Loader />}
 
+      {/* OTP Re-Verification Popup */}
+      {showVerifyPopup && (
+        <div className="fixed inset-0 bg-black/40 z-50 flex items-center justify-center">
+          <div className="bg-white rounded-lg p-6 w-[90%] max-w-sm shadow-lg relative">
+            <button
+              className="absolute top-2 right-2 text-gray-500"
+              onClick={() => setShowVerifyPopup(false)}
+            >
+              <XMarkIcon className="w-5 h-5" />
+            </button>
+            <h2 className="text-lg font-bold mb-4">Account not verified</h2>
+            <p className="text-sm text-gray-600 mb-3">Resend OTP to verify your number</p>
+            <input
+              type="tel"
+              value={unverifiedNumber}
+              onChange={(e) => setUnverifiedNumber(e.target.value)}
+              className="w-full px-4 py-2 border rounded mb-4"
+            />
+            <button
+              onClick={handleResendOtp}
+              className="w-full bg-orange-500 text-white py-2 rounded hover:bg-orange-600"
+            >
+              Send OTP
+            </button>
+          </div>
+        </div>
+      )}
+
       <div className="min-h-[calc(100vh-64px)] w-full bg-[hsl(218,41%,15%)] p-6 relative overflow-hidden">
-        {/* Decorative BG */}
         <div className="absolute top-[-60px] left-[-130px] w-[220px] h-[220px] bg-[radial-gradient(#44006b,#ad1fff)] rounded-full z-0" />
         <div className="absolute bottom-[-60px] right-[-110px] w-[300px] h-[300px] bg-[radial-gradient(#44006b,#ad1fff)] rounded-[38%_62%_63%_37%/70%_33%_67%_30%] z-0" />
 
-        {/* Main layout */}
         <div className="relative z-10 flex flex-col md:flex-row items-center justify-center h-full">
           <div className="w-full md:w-1/2 text-white px-6 mb-10 md:mb-0">
             <h1 className="text-4xl font-bold mb-6 font-sans">
@@ -135,7 +183,6 @@ export default function AuthPage() {
               Sign in
             </h2>
 
-            {/* Login Form */}
             <div className="space-y-5">
               <input
                 type="tel"
