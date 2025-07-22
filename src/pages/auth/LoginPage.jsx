@@ -8,6 +8,7 @@ import {
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import Loader from "../Loader";
+import { auth, RecaptchaVerifier, signInWithPhoneNumber } from "../../firebase";
 
 export default function AuthPage() {
   const [showPassword, setShowPassword] = useState(false);
@@ -49,43 +50,70 @@ export default function AuthPage() {
     }
   };
 
-  const sendOtp = async () => {
-    if (!number) return alert("Enter your phone number");
+ const sendOtp = async () => {
+  if (!number) return alert("Enter your phone number");
+  let formattedNumber = number.startsWith("+977") ? number : "+977" + number;
+
+  setLoading(true);
+  try {
+    // Setup invisible recaptcha
+    window.recaptchaVerifier = new RecaptchaVerifier(
+      "recaptcha-container",
+      {
+        size: "invisible",
+        callback: (response) => {
+          // reCAPTCHA solved - will proceed with OTP send
+        },
+      },
+      auth
+    );
+
+    const appVerifier = window.recaptchaVerifier;
+
+    const confirmationResult = await signInWithPhoneNumber(auth, formattedNumber, appVerifier);
+
+    window.confirmationResult = confirmationResult;
+
+    alert("OTP sent via Firebase");
+    setStep(2);
+  } catch (err) {
+    console.error(err);
+    alert("Failed to send OTP via Firebase");
+  } finally {
+    setLoading(false);
+  }
+};
+const verifyOtp = async () => {
+  const code = otp.join("");
+  if (code.length !== 4) return alert("Enter full OTP");
+
+  setLoading(true);
+  try {
+    if (!window.confirmationResult) throw new Error("No OTP request found");
+
+    const result = await window.confirmationResult.confirm(code);
+
+    // User signed in successfully.
+    alert("OTP verified successfully via Firebase");
+
+    // CALL BACKEND TO MARK VERIFIED
     let formattedNumber = number.startsWith("+977") ? number : "+977" + number;
+    await axios.post("https://nepcart-backend.onrender.com/api/auth/mark-verified", {
+      number: formattedNumber,
+    });
 
-    setLoading(true);
-    try {
-      const res = await axios.post("https://nepcart-backend.onrender.com/api/auth/send-otp", {
-        number: formattedNumber,
-      });
-      alert(res.data.msg);
-      setStep(2);
-    } catch (err) {
-      alert(err.response?.data?.msg || "Failed to send OTP");
-    } finally {
-      setLoading(false);
-    }
-  };
+    alert("Your number is now marked as verified.");
 
-  const verifyOtp = async () => {
-    const code = otp.join("");
-    if (code.length !== 4) return alert("Enter full OTP");
-    let formattedNumber = number.startsWith("+977") ? number : "+977" + number;
+    // Proceed to next step or close forgot password flow
+    setStep(3);
+  } catch (err) {
+    console.error(err);
+    alert("OTP verification failed via Firebase");
+  } finally {
+    setLoading(false);
+  }
+};
 
-    setLoading(true);
-    try {
-      const res = await axios.post("https://nepcart-backend.onrender.com/api/auth/verify-otp", {
-        number: formattedNumber,
-        otp: code,
-      });
-      alert(res.data.msg);
-      setStep(3);
-    } catch (err) {
-      alert(err.response?.data?.msg || "OTP verification failed");
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const resetPassword = async () => {
     if (!newPassword) return alert("Enter a new password");
@@ -108,21 +136,41 @@ export default function AuthPage() {
     }
   };
 
-  const handleResendOtp = async () => {
-    try {
-      const res = await axios.post("https://nepcart-backend.onrender.com/api/auth/send-otp", {
-        number: unverifiedNumber,
-      });
-      alert(res.data.msg || "OTP sent");
-      navigate("/verify", { state: { number: unverifiedNumber } });
-      setShowVerifyPopup(false);
-    } catch (err) {
-      alert(err.response?.data?.msg || "Failed to send OTP");
-    }
+const handleResendOtp = async () => {
+  if (!unverifiedNumber) return alert("Phone number is missing");
+
+  const setupRecaptcha = () => {
+    window.recaptchaVerifier = new RecaptchaVerifier(
+      "recaptcha-container",
+      {
+        size: "invisible",
+        callback: (response) => {},
+      },
+      auth
+    );
   };
+
+  try {
+    setupRecaptcha();
+    const appVerifier = window.recaptchaVerifier;
+
+    await signInWithPhoneNumber(auth, unverifiedNumber, appVerifier).then(
+      (confirmationResult) => {
+        window.confirmationResult = confirmationResult;
+        navigate("/verify", { state: { number: unverifiedNumber } });
+        setShowVerifyPopup(false);
+      }
+    );
+  } catch (error) {
+    console.log(error);
+    alert("Failed to send OTP via Firebase");
+  }
+};
+
 
   return (
     <>
+        <div id="recaptcha-container"></div>
       {loading && <Loader />}
 
       {/* OTP Re-Verification Popup */}

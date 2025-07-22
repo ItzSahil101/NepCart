@@ -5,6 +5,8 @@ import { Link, useNavigate } from "react-router-dom";
 import { useAlert } from "../../components/AlertBox";
 import axios from "axios";
 import Loader from "../Loader";
+import { auth, RecaptchaVerifier } from "../../firebase";
+import { signInWithPhoneNumber } from "firebase/auth";
 
 export default function SignupPage() {
   const [showPassword, setShowPassword] = useState(false);
@@ -16,35 +18,51 @@ export default function SignupPage() {
     location: ""
   });
 
+    const [confirmationResult, setConfirmationResult] = useState(null);
+
   const navigate = useNavigate();
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+const handleSubmit = async (e) => {
+  e.preventDefault();
 
-    const payload = {
-      ...form,
-      number: `+977${form.number}`
-    };
+  const fullNumber = `+977${form.number}`;
+  const payload = { ...form, number: fullNumber };
 
-      setLoading(true);
+  setLoading(true);
 
-    try {
-      const res = await axios.post("https://nepcart-backend.onrender.com/api/auth/signup", payload);
-      alert(res.data.msg || "Signup successful, please verify your number");
-      navigate("/verify", { state: { number: payload.number } });
-    } catch (err) {
-      alert(err.response?.data?.msg || "Signup failed", "error");
-    } finally {
-    setLoading(false); // ✅ Always stop loader
+  try {
+    const res = await axios.post("https://nepcart-backend.onrender.com/api/auth/signup", payload);
+
+    // Setup reCAPTCHA once
+    window.recaptchaVerifier = new RecaptchaVerifier("recaptcha-container", {
+      size: "invisible",
+      callback: () => {}
+    }, auth);
+
+    const appVerifier = window.recaptchaVerifier;
+
+    const confirmation = await signInWithPhoneNumber(auth, fullNumber, appVerifier);
+    window.confirmationResult = confirmation;
+
+    alert("OTP sent! Please verify your number.");
+    navigate("/verify", { state: { number: fullNumber } });
+
+  } catch (err) {
+    console.error(err);
+    alert(err.response?.data?.msg || "Signup failed");
+  } finally {
+    setLoading(false);
   }
-  };
+};
+
 
   return (
     <>
+    <div id="recaptcha-container"></div> {/* Required for invisible reCAPTCHA */}
      {loading && <Loader />}
     <div className="min-h-[calc(100vh-64px)] w-full relative overflow-hidden bg-[hsl(218,41%,15%)] bg-[radial-gradient(circle_at_0%_0%,hsl(218,41%,35%)_15%,hsl(218,41%,30%)_35%,hsl(218,41%,20%)_75%,hsl(218,41%,19%)_80%,transparent_100%),radial-gradient(circle_at_100%_100%,hsl(218,41%,45%)_15%,hsl(218,41%,30%)_35%,hsl(218,41%,20%)_75%,hsl(218,41%,19%)_80%,transparent_100%)] p-6">
       

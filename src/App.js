@@ -1,28 +1,28 @@
 import React from "react";
 
 // Maintenance Page Display
-const App = () => {
-  return (
-    <div style={{ 
-      height: "100vh", 
-      width: "100vw", 
-      display: "flex", 
-      justifyContent: "center", 
-      alignItems: "center", 
-      backgroundColor: "#f8f9fa"
-    }}>
-      <img 
-        src="https://www.shutterstock.com/image-vector/website-under-construction-page-web-260nw-2014660451.jpg" 
-        alt="Under Maintenance" 
-        style={{ maxWidth: "100%", maxHeight: "100%", objectFit: "contain" }}
-      />
-    </div>
-  );
-};
+// const App = () => {
+//   return (
+//     <div style={{ 
+//       height: "100vh", 
+//       width: "100vw", 
+//       display: "flex", 
+//       justifyContent: "center", 
+//       alignItems: "center", 
+//       backgroundColor: "#f8f9fa"
+//     }}>
+//       <img 
+//         src="https://www.shutterstock.com/image-vector/website-under-construction-page-web-260nw-2014660451.jpg" 
+//         alt="Under Maintenance" 
+//         style={{ maxWidth: "100%", maxHeight: "100%", objectFit: "contain" }}
+//       />
+//     </div>
+//   );
+// };
 
-export default App;
+// export default App;
 
-/*
+
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 
 import Navbar from "./components/Navbar";
@@ -114,4 +114,3 @@ const App = () => {
     </BrowserRouter>
   );
 };
-*/
