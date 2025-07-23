@@ -22,26 +22,30 @@ export default function SignupPage() {
 
   const navigate = useNavigate();
 
-  useEffect(() => {
+useEffect(() => {
+  auth.useDeviceLanguage(); // optional localization
   if (!window.recaptchaVerifier) {
     window.recaptchaVerifier = new RecaptchaVerifier(auth, "recaptcha-container", {
       size: "invisible",
-      callback: (response) => {
-        console.log("reCAPTCHA verified", response);
-      },
+      callback: () => console.log("reCAPTCHA solved"),
+      "expired-callback": () => {
+        console.log("reCAPTCHA expired");
+      }
     });
-    window.recaptchaVerifier.render().then((widgetId) => {
-      window.recaptchaWidgetId = widgetId;
+    window.recaptchaVerifier.render().then((id) => {
+      window.recaptchaWidgetId = id;
     });
   }
 }, []);
+
+
 
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = async (e) => {
+const handleSubmit = async (e) => {
   e.preventDefault();
 
   const { userName, number, password, location } = form;
@@ -70,12 +74,17 @@ export default function SignupPage() {
 
   } catch (err) {
     console.error("OTP sending error:", err);
+
+    // Reset reCAPTCHA widget to allow retry
+ if (typeof window.grecaptcha !== 'undefined' && window.recaptchaWidgetId !== undefined) {
+  window.grecaptcha.reset(window.recaptchaWidgetId);
+}
+
     alert("Failed to send OTP. Please try again.");
   } finally {
     setLoading(false);
   }
 };
-
 
 
   return (
