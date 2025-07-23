@@ -43,7 +43,7 @@ export default function SignupPage() {
     return;
   }
 
-  // Add +977 prefix if not present
+  // Add +977 prefix if missing
   if (!number.startsWith("+977")) {
     number = "+977" + number;
   }
@@ -51,7 +51,7 @@ export default function SignupPage() {
   setLoading(true);
 
   try {
-    // Send corrected number in form
+    // Send the updated number and other form data explicitly
     await axios.post("https://nepcart-backend.onrender.com/api/users/signup", {
       userName,
       number,
@@ -62,7 +62,10 @@ export default function SignupPage() {
     navigate("/log");
   } catch (error) {
     console.error("Signup error:", error.response?.data || error.message);
-    alert("Signup failed. " + (error.response?.data?.msg || "Please try again."));
+    alert(
+      "Signup failed. " +
+        (error.response?.data?.msg || error.message || "Please try again.")
+    );
   } finally {
     setLoading(false);
   }
