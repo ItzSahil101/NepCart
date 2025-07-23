@@ -1,5 +1,5 @@
 // src/pages/auth/SignupPage.jsx
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { ArrowRightIcon, EyeIcon, EyeSlashIcon } from "@heroicons/react/24/solid";
 import { Link, useNavigate } from "react-router-dom";
 import { useAlert } from "../../components/AlertBox";
@@ -22,6 +22,21 @@ export default function SignupPage() {
 
   const navigate = useNavigate();
 
+  useEffect(() => {
+  if (!window.recaptchaVerifier) {
+    window.recaptchaVerifier = new RecaptchaVerifier(auth, "recaptcha-container", {
+      size: "invisible",
+      callback: (response) => {
+        console.log("reCAPTCHA verified", response);
+      },
+    });
+    window.recaptchaVerifier.render().then((widgetId) => {
+      window.recaptchaWidgetId = widgetId;
+    });
+  }
+}, []);
+
+
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
@@ -36,40 +51,31 @@ export default function SignupPage() {
     return;
   }
 
+  if (number.length !== 10) {
+    alert("Please enter a valid 10-digit Nepali number");
+    return;
+  }
+
   setLoading(true);
 
   try {
-    // Setup reCAPTCHA
-    if (!window.recaptchaVerifier) {
-      window.recaptchaVerifier = new RecaptchaVerifier(auth, "recaptcha-container", {
-        size: "invisible",
-        callback: (response) => {
-          console.log("Recaptcha verified");
-        },
-      });
-    }
-
     const appVerifier = window.recaptchaVerifier;
 
-    // Send OTP
     const confirmation = await signInWithPhoneNumber(auth, "+977" + number, appVerifier);
     window.confirmationResult = confirmation;
 
-    alert("OTP sent successfully!");
-
-    // Save user data temporarily
+    alert("OTP sent!");
     localStorage.setItem("signupData", JSON.stringify(form));
-
-    // Redirect to verification page
     navigate("/verify", { state: { number } });
 
   } catch (err) {
-    console.error("OTP sending failed", err);
-    alert("Failed to send OTP. Please check the number and try again.");
+    console.error("OTP sending error:", err);
+    alert("Failed to send OTP. Please try again.");
   } finally {
     setLoading(false);
   }
 };
+
 
 
   return (
