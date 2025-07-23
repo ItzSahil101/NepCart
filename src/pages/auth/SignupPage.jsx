@@ -22,30 +22,12 @@ export default function SignupPage() {
 
   const navigate = useNavigate();
 
-useEffect(() => {
-  auth.useDeviceLanguage(); // optional localization
-  if (!window.recaptchaVerifier) {
-    window.recaptchaVerifier = new RecaptchaVerifier(auth, "recaptcha-container", {
-      size: "invisible",
-      callback: () => console.log("reCAPTCHA solved"),
-      "expired-callback": () => {
-        console.log("reCAPTCHA expired");
-      }
-    });
-    window.recaptchaVerifier.render().then((id) => {
-      window.recaptchaWidgetId = id;
-    });
-  }
-}, []);
-
-
-
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-const handleSubmit = async (e) => {
+   const handleSubmit = async (e) => {
   e.preventDefault();
 
   const { userName, number, password, location } = form;
@@ -63,24 +45,12 @@ const handleSubmit = async (e) => {
   setLoading(true);
 
   try {
-    const appVerifier = window.recaptchaVerifier;
-
-    const confirmation = await signInWithPhoneNumber(auth, "+977" + number, appVerifier);
-    window.confirmationResult = confirmation;
-
-    alert("OTP sent!");
-    localStorage.setItem("signupData", JSON.stringify(form));
-    navigate("/verify", { state: { number } });
-
-  } catch (err) {
-    console.error("OTP sending error:", err);
-
-    // Reset reCAPTCHA widget to allow retry
- if (typeof window.grecaptcha !== 'undefined' && window.recaptchaWidgetId !== undefined) {
-  window.grecaptcha.reset(window.recaptchaWidgetId);
-}
-
-    alert("Failed to send OTP. Please try again.");
+    await axios.post("https://nepcart-backend.onrender.com/api/users/signup", form);
+    alert("Signup successful! Please login.");
+    navigate("/log");
+  } catch (error) {
+    console.error("Signup error:", error);
+    alert("Signup failed. Please try again.");
   } finally {
     setLoading(false);
   }
