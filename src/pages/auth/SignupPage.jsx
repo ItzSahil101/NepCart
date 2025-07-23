@@ -27,10 +27,11 @@ export default function SignupPage() {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-   const handleSubmit = async (e) => {
+
+  const handleSubmit = async (e) => {
   e.preventDefault();
 
-  const { userName, number, password, location } = form;
+  let { userName, number, password, location } = form;
 
   if (!userName || !number || !password) {
     alert("Please fill in all required fields");
@@ -42,19 +43,31 @@ export default function SignupPage() {
     return;
   }
 
+  // Add +977 prefix if not present
+  if (!number.startsWith("+977")) {
+    number = "+977" + number;
+  }
+
   setLoading(true);
 
   try {
-    await axios.post("https://nepcart-backend.onrender.com/api/users/signup", form);
+    // Send corrected number in form
+    await axios.post("https://nepcart-backend.onrender.com/api/users/signup", {
+      userName,
+      number,
+      password,
+      location,
+    });
     alert("Signup successful! Please login.");
     navigate("/log");
   } catch (error) {
-    console.error("Signup error:", error);
-    alert("Signup failed. Please try again.");
+    console.error("Signup error:", error.response?.data || error.message);
+    alert("Signup failed. " + (error.response?.data?.msg || "Please try again."));
   } finally {
     setLoading(false);
   }
 };
+
 
 
   return (
