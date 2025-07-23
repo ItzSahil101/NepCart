@@ -27,7 +27,6 @@ export default function SignupPage() {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-
   const handleSubmit = async (e) => {
   e.preventDefault();
 
@@ -43,7 +42,6 @@ export default function SignupPage() {
     return;
   }
 
-  // Add +977 prefix if missing
   if (!number.startsWith("+977")) {
     number = "+977" + number;
   }
@@ -51,13 +49,13 @@ export default function SignupPage() {
   setLoading(true);
 
   try {
-    // Send the updated number and other form data explicitly
     await axios.post("https://nepcart-backend.onrender.com/api/users/signup", {
       userName,
       number,
       password,
-      location,
+      location: location || "", // ensure location is included
     });
+
     alert("Signup successful! Please login.");
     navigate("/log");
   } catch (error) {
