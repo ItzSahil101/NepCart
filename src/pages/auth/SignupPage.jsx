@@ -49,7 +49,7 @@ export default function SignupPage() {
   setLoading(true);
 
   try {
-    await axios.post("https://nepcart-backend.onrender.com/api/users/signup", {
+    await axios.post("https://nepcart-backend.onrender.com/api/auth/signup", {
       userName,
       number,
       password,
