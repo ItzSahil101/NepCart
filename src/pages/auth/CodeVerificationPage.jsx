@@ -3,7 +3,7 @@ import { ArrowRightIcon, ArrowLeftIcon } from "@heroicons/react/24/solid";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
 import Loader from "../Loader";
-import { auth } from "../../firebase";
+import { auth } from "../../firebase.config";
 
 export default function CodeVerificationAuthPage() {
   const [code, setCode] = useState("");
