@@ -50,127 +50,147 @@ export default function AuthPage() {
     }
   };
 
- const sendOtp = async () => {
-  if (!number) return alert("Enter your phone number");
-  let formattedNumber = number.startsWith("+977") ? number : "+977" + number;
-
-  setLoading(true);
-  try {
-    // Setup invisible recaptcha
-    window.recaptchaVerifier = new RecaptchaVerifier(
-      "recaptcha-container",
-      {
-        size: "invisible",
-        callback: (response) => {
-          // reCAPTCHA solved - will proceed with OTP send
-        },
-      },
-      auth
-    );
-
-    const appVerifier = window.recaptchaVerifier;
-
-    const confirmationResult = await signInWithPhoneNumber(auth, formattedNumber, appVerifier);
-
-    window.confirmationResult = confirmationResult;
-
-    alert("OTP sent via Firebase");
-    setStep(2);
-  } catch (err) {
-    console.error(err);
-    alert("Failed to send OTP via Firebase");
-  } finally {
-    setLoading(false);
-  }
-};
-const verifyOtp = async () => {
-  const code = otp.join("");
-  if (code.length !== 4) return alert("Enter full OTP");
-
-  setLoading(true);
-  try {
-    if (!window.confirmationResult) throw new Error("No OTP request found");
-
-    const result = await window.confirmationResult.confirm(code);
-
-    // User signed in successfully.
-    alert("OTP verified successfully via Firebase");
-
-    // CALL BACKEND TO MARK VERIFIED
-    let formattedNumber = number.startsWith("+977") ? number : "+977" + number;
-    await axios.post("https://nepcart-backend.onrender.com/api/auth/mark-verified", {
-      number: formattedNumber,
-    });
-
-    alert("Your number is now marked as verified.");
-
-    // Proceed to next step or close forgot password flow
-    setStep(3);
-  } catch (err) {
-    console.error(err);
-    alert("OTP verification failed via Firebase");
-  } finally {
-    setLoading(false);
-  }
-};
-
-
   const resetPassword = async () => {
-    if (!newPassword) return alert("Enter a new password");
-    let formattedNumber = number.startsWith("+977") ? number : "+977" + number;
+    if (!newPassword) return alert("Please enter a new password");
+    if (newPassword.length < 6)
+      return alert("Password must be at least 6 characters");
 
     setLoading(true);
     try {
-      const res = await axios.post("https://nepcart-backend.onrender.com/api/auth/reset-password", {
-        number: formattedNumber,
-        newPassword,
-      });
-      alert(res.data.msg);
+      const formattedNumber = number.startsWith("+977")
+        ? number
+        : "+977" + number;
+      const res = await axios.post(
+        "https://nepcart-backend.onrender.com/api/auth/reset-password",
+        {
+          number: formattedNumber,
+          newPassword,
+        }
+      );
+      alert(res.data?.msg || "Password reset successful");
       setForgotOpen(false);
       setStep(1);
       setNewPassword("");
-    } catch (err) {
-      alert(err.response?.data?.msg || "Password reset failed");
+      setOtp(["", "", "", "", "", ""]); // Reset OTP inputs if you have 6 digits
+    } catch (error) {
+      console.error("Reset password error:", error);
+      alert(error.response?.data?.msg || "Failed to reset password");
     } finally {
       setLoading(false);
     }
   };
 
-const handleResendOtp = async () => {
-  if (!unverifiedNumber) return alert("Phone number is missing");
+  const sendOtp = async () => {
+    if (!number) return alert("Enter your phone number");
+    let formattedNumber = number.startsWith("+977") ? number : "+977" + number;
 
-  const setupRecaptcha = () => {
-    window.recaptchaVerifier = new RecaptchaVerifier(
-      "recaptcha-container",
-      {
-        size: "invisible",
-        callback: (response) => {},
-      },
-      auth
-    );
+    setLoading(true);
+    try {
+      if (!window.recaptchaVerifier) {
+        window.recaptchaVerifier = new RecaptchaVerifier(
+          "recaptcha-container",
+          { size: "invisible" },
+          auth
+        );
+        await window.recaptchaVerifier.render();
+      } else {
+        // Reset reCAPTCHA on resend
+        const widgetId = window.recaptchaVerifier.widgetId;
+        if (window.grecaptcha && widgetId !== undefined) {
+          window.grecaptcha.reset(widgetId);
+        }
+      }
+
+      const appVerifier = window.recaptchaVerifier;
+      const confirmationResult = await signInWithPhoneNumber(
+        auth,
+        formattedNumber,
+        appVerifier
+      );
+      window.confirmationResult = confirmationResult;
+
+      alert("OTP sent via Firebase");
+      setStep(2);
+    } catch (err) {
+      console.error("Failed to send OTP:", err);
+      alert("Failed to send OTP via Firebase. Please try again.");
+    } finally {
+      setLoading(false);
+    }
   };
 
-  try {
-    setupRecaptcha();
-    const appVerifier = window.recaptchaVerifier;
+  const verifyOtp = async () => {
+    const codeStr = otp.join("");
+    if (codeStr.length !== 4 && codeStr.length !== 6)
+      // You may adjust based on your OTP length (Firebase usually 6)
+      return alert("Enter full OTP");
 
-    await signInWithPhoneNumber(auth, unverifiedNumber, appVerifier).then(
-      (confirmationResult) => {
-        window.confirmationResult = confirmationResult;
-        navigate("/verify", { state: { number: unverifiedNumber } });
-        setShowVerifyPopup(false);
+    setLoading(true);
+    try {
+      if (!window.confirmationResult)
+        throw new Error("No OTP confirmation found");
+
+      const result = await window.confirmationResult.confirm(codeStr);
+
+      alert("OTP verified successfully via Firebase");
+
+      // Call backend to mark verified
+      let formattedNumber = number.startsWith("+977")
+        ? number
+        : "+977" + number;
+      await axios.post(
+        "https://nepcart-backend.onrender.com/api/auth/mark-verified",
+        {
+          number: formattedNumber,
+        }
+      );
+
+      alert("Your number is now marked as verified.");
+      setStep(3);
+    } catch (err) {
+      console.error("OTP verification error:", err);
+      alert("OTP verification failed. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleResendOtp = async () => {
+    if (!unverifiedNumber) return alert("Phone number is missing");
+
+    try {
+      if (!window.recaptchaVerifier) {
+        window.recaptchaVerifier = new RecaptchaVerifier(
+          "recaptcha-container",
+          { size: "invisible" },
+          auth
+        );
+        await window.recaptchaVerifier.render();
+      } else {
+        const widgetId = window.recaptchaVerifier.widgetId;
+        if (window.grecaptcha && widgetId !== undefined) {
+          window.grecaptcha.reset(widgetId);
+        }
       }
-    );
-  } catch (error) {
-    console.log(error);
-    alert("Failed to send OTP via Firebase");
-  }
-};
+      const appVerifier = window.recaptchaVerifier;
 
+      const confirmationResult = await signInWithPhoneNumber(
+        auth,
+        unverifiedNumber,
+        appVerifier
+      );
+      window.confirmationResult = confirmationResult;
+      navigate("/verify", { state: { number: unverifiedNumber } });
+      setShowVerifyPopup(false);
+    } catch (error) {
+      console.error("Resend OTP error:", error);
+      alert("Failed to send OTP via Firebase. Please try again.");
+    }
+  };
 
   return (
     <>
-        <div id="recaptcha-container"></div>
+      <div id="recaptcha-container"></div>
       {loading && <Loader />}
 
       {/* OTP Re-Verification Popup */}
@@ -184,7 +204,9 @@ const handleResendOtp = async () => {
               <XMarkIcon className="w-5 h-5" />
             </button>
             <h2 className="text-lg font-bold mb-4">Account not verified</h2>
-            <p className="text-sm text-gray-600 mb-3">Resend OTP to verify your number</p>
+            <p className="text-sm text-gray-600 mb-3">
+              Resend OTP to verify your number
+            </p>
             <input
               type="tel"
               value={unverifiedNumber}
@@ -212,7 +234,8 @@ const handleResendOtp = async () => {
               <span className="text-[hsl(218,81%,75%)]">platform !!</span>
             </h1>
             <p className="text-[hsl(218,81%,85%)] text-sm">
-              Buy custom printed tshirts. Upload your photo and get it printed affordably.
+              Buy custom printed tshirts. Upload your photo and get it printed
+              affordably.
             </p>
           </div>
 
@@ -278,11 +301,17 @@ const handleResendOtp = async () => {
             </div>
 
             <div className="flex justify-center text-xs mt-6 gap-4">
-              <Link to="/log" className="text-orange-500 font-semibold hover:underline">
+              <Link
+                to="/log"
+                className="text-orange-500 font-semibold hover:underline"
+              >
                 Sign in
               </Link>
               <span className="text-gray-400">|</span>
-              <Link to="/sign" className="text-gray-800 font-semibold hover:underline">
+              <Link
+                to="/sign"
+                className="text-gray-800 font-semibold hover:underline"
+              >
                 Sign up
               </Link>
             </div>
@@ -292,7 +321,9 @@ const handleResendOtp = async () => {
               <div className="absolute inset-0 bg-white/95 backdrop-blur-md p-6 rounded-xl z-20 flex flex-col justify-center">
                 {step === 1 && (
                   <>
-                    <h2 className="text-center font-bold mb-4 text-lg">Reset Password</h2>
+                    <h2 className="text-center font-bold mb-4 text-lg">
+                      Reset Password
+                    </h2>
                     <input
                       type="tel"
                       placeholder="Phone Number"
@@ -311,23 +342,47 @@ const handleResendOtp = async () => {
 
                 {step === 2 && (
                   <>
-                    <h2 className="text-center font-bold mb-4 text-lg">Enter OTP</h2>
+                    <h2 className="text-center font-bold mb-4 text-lg">
+                      Enter OTP
+                    </h2>
                     <div className="flex justify-between gap-2 mb-4">
                       {otp.map((val, i) => (
                         <input
                           key={i}
                           type="text"
+                          inputMode="numeric"
+                          pattern="[0-9]*"
                           maxLength="1"
                           value={val}
                           onChange={(e) => {
-                            const copy = [...otp];
-                            copy[i] = e.target.value;
-                            setOtp(copy);
+                            const val = e.target.value;
+                            if (/^\d?$/.test(val)) {
+                              // Only digits or empty allowed
+                              const copy = [...otp];
+                              copy[i] = val;
+                              setOtp(copy);
+                              if (val && i < otp.length - 1) {
+                                const nextInput = document.getElementById(
+                                  `otp-${i + 1}`
+                                );
+                                if (nextInput) nextInput.focus();
+                              }
+                            }
                           }}
+                          onKeyDown={(e) => {
+                            if (e.key === "Backspace" && !otp[i] && i > 0) {
+                              const prevInput = document.getElementById(
+                                `otp-${i - 1}`
+                              );
+                              if (prevInput) prevInput.focus();
+                            }
+                          }}
+                          id={`otp-${i}`}
                           className="w-12 h-12 text-center border rounded text-xl"
                         />
                       ))}
                     </div>
+
                     <button
                       onClick={verifyOtp}
                       className="bg-green-600 text-white py-2 rounded hover:bg-green-700"
@@ -339,7 +394,9 @@ const handleResendOtp = async () => {
 
                 {step === 3 && (
                   <>
-                    <h2 className="text-center font-bold mb-4 text-lg">Set New Password</h2>
+                    <h2 className="text-center font-bold mb-4 text-lg">
+                      Set New Password
+                    </h2>
                     <input
                       type="password"
                       placeholder="New Password"

@@ -5,7 +5,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useAlert } from "../../components/AlertBox";
 import axios from "axios";
 import Loader from "../Loader";
-import { auth, RecaptchaVerifier } from "../../firebase";
+import { auth, RecaptchaVerifier } from "../../firebase.config";
 import { signInWithPhoneNumber } from "firebase/auth";
 
 export default function SignupPage() {
@@ -26,34 +26,46 @@ export default function SignupPage() {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-const handleSubmit = async (e) => {
+  const handleSubmit = async (e) => {
   e.preventDefault();
 
-  const fullNumber = `+977${form.number}`;
-  const payload = { ...form, number: fullNumber };
+  const { userName, number, password, location } = form;
+
+  if (!userName || !number || !password) {
+    alert("Please fill in all required fields");
+    return;
+  }
 
   setLoading(true);
 
   try {
-    const res = await axios.post("https://nepcart-backend.onrender.com/api/auth/signup", payload);
-
-    // Setup reCAPTCHA once
-    window.recaptchaVerifier = new RecaptchaVerifier("recaptcha-container", {
-      size: "invisible",
-      callback: () => {}
-    }, auth);
+    // Setup reCAPTCHA
+    if (!window.recaptchaVerifier) {
+      window.recaptchaVerifier = new RecaptchaVerifier(auth, "recaptcha-container", {
+        size: "invisible",
+        callback: (response) => {
+          console.log("Recaptcha verified");
+        },
+      });
+    }
 
     const appVerifier = window.recaptchaVerifier;
 
-    const confirmation = await signInWithPhoneNumber(auth, fullNumber, appVerifier);
+    // Send OTP
+    const confirmation = await signInWithPhoneNumber(auth, "+977" + number, appVerifier);
     window.confirmationResult = confirmation;
 
-    alert("OTP sent! Please verify your number.");
-    navigate("/verify", { state: { number: fullNumber } });
+    alert("OTP sent successfully!");
+
+    // Save user data temporarily
+    localStorage.setItem("signupData", JSON.stringify(form));
+
+    // Redirect to verification page
+    navigate("/verify", { state: { number } });
 
   } catch (err) {
-    console.error(err);
-    alert(err.response?.data?.msg || "Signup failed");
+    console.error("OTP sending failed", err);
+    alert("Failed to send OTP. Please check the number and try again.");
   } finally {
     setLoading(false);
   }

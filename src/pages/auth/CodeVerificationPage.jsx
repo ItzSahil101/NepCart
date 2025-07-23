@@ -21,33 +21,42 @@ export default function CodeVerificationAuthPage() {
     }
   };
 
- const handleSubmit = async () => {
-  if (!number || code.length !== 6) {
+  const handleSubmit = async () => {
+  if (code.length !== 6) {
     alert("Enter a valid 6-digit OTP");
     return;
   }
 
   setLoading(true);
+
   try {
-    // Firebase OTP confirmation
+    if (!window.confirmationResult) throw new Error("No OTP confirmation found");
+
     const result = await window.confirmationResult.confirm(code);
     const user = result.user;
 
-    // Now call your backend to mark user verified
+    // ✅ Proceed to create user in backend now
+    const formData = JSON.parse(localStorage.getItem("signupData"));
+    await axios.post("https://nepcart-backend.onrender.com/api/users/signup", formData);
+
+    // ✅ Mark user as verified
     await axios.post("https://nepcart-backend.onrender.com/api/auth/mark-verified", {
-      number,
+      number: formData.number,
     });
 
-    alert("Phone verified and user marked as verified.");
+    alert("Phone verified and user created successfully");
+    localStorage.removeItem("signupData");
     navigate("/log");
+
   } catch (err) {
-    console.error(err);
-    alert("OTP verification failed");
+    console.error("OTP verification failed:", err);
+    alert("Invalid OTP. Please try again.");
     setCode("");
   } finally {
     setLoading(false);
   }
 };
+
 
 
   return (
