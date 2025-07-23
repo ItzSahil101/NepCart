@@ -8,7 +8,7 @@ import {
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import Loader from "../Loader";
-import { auth, RecaptchaVerifier, signInWithPhoneNumber } from "../../firebase";
+import { auth, RecaptchaVerifier, signInWithPhoneNumber } from "../../firebase.config";
 
 export default function AuthPage() {
   const [showPassword, setShowPassword] = useState(false);
