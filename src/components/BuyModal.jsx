@@ -57,6 +57,7 @@ export default function BuyNowModal({ product, quantity = 1, onClose }) {
         </button>
 
         <h2 className="text-lg font-semibold mb-3">Confirm Purchase</h2>
+        <h4>We will call you to ask for Rs.100 to confirm your order.</h4>
         <p className="text-sm text-gray-700 mb-1">Product: {product.name}</p>
         <p className="text-sm text-gray-700 mb-4">
           Price: ₹{product.price} × {quantity} = ₹{product.price * quantity}
