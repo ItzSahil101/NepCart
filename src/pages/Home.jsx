@@ -12,7 +12,7 @@ export default function Home() {
       {/* <CategoryFilter /> */}
       <SortFilterBar />
       <FeaturedProducts />
-      <TrendingSection />
+      {/* <TrendingSection /> */}
     </div>
   )
 }
