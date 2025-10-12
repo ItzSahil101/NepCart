@@ -252,7 +252,7 @@ const Profile = () => {
           <h3 className="text-lg font-semibold text-orange-500 mb-4">
             Order Tracking (we will call you soon)
             <br />
-             25% pay then 75% COD
+            <h4>We will call you to ask for Rs.100 to confirm your order.</h4>
           </h3>
           <div className="space-y-4">
             {loadingOrders ? (

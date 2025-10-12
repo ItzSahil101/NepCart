@@ -233,6 +233,8 @@ const CartPage = () => {
             <p className="text-gray-600 mb-6">
               Are you sure you want to confirm this order? Your cart will be processed.
             </p>
+            <br/>
+            <h4>We will call you to ask for Rs.100 to confirm your order.</h4>
 
             {checkoutLoading ? (
               <Loader />
