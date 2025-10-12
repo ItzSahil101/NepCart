@@ -36,7 +36,7 @@ export default function Footer() {
             <p className="font-bold text-xl leading-6 text-[#FF7F11]">
               The agency of
               <br />
-              NepCart
+              NepMart
               <br />
               top_xd®
             </p>
@@ -61,7 +61,7 @@ export default function Footer() {
               Contact: 
             </p>
             <p className="mt-3 text-sm leading-6 text-gray-300">
-              <b>NepCart official store</b>
+              <b>NepMart official store</b>
               <br />
                 9812398463
               <br />
@@ -78,10 +78,11 @@ export default function Footer() {
           <div className="flex flex-col gap-4">
             <div>
               <p className="uppercase text-sm font-semibold text-[#FF7F11]">
-                Want to buy customize tshirt?
+                Want to buy Products?
               </p>
               <p className="mt-2 text-sm leading-6 underline underline-offset-2 text-[#FF7F11]">
-                check /custom page of our site
+                {/* check /custom page of our site */}
+                Check Featured Products
               </p>
             </div>
             <div className="flex gap-3 text-white mt-3">
