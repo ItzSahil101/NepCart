@@ -48,19 +48,11 @@ export default function Footer() {
               Our Team
             </p>
             <p className="mt-3 text-sm leading-6 text-gray-300">
-              <code>Manager: <b>Sahil Jogi</b></code>
+              <code>Developer: <b>Sahil Jogi</b></code>
               <br />
-              <code>Delivery Incharge: <b>Amit katuwal</b></code>
+              <code>Manager: <b>Samyog Limbu</b></code>
               <br />
-             <code>AD incharge: <b>Sapan Jogi</b></code>
-              <br />
-              <code>Product Incharge: <b>Quson Rai</b></code>
-              <br />
-               <code>Investor: <b>Himal Timsina</b></code>
             </p>
-            {/* <button className="mt-4 border-b border-[#FF7F11] text-sm hover:opacity-70 text-[#FF7F11]">
-              SEE CONTACT
-            </button> */}
           </div>
 
           {/* Europe Office */}
