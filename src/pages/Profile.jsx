@@ -282,6 +282,8 @@ const Profile = () => {
                       >
                         {order.productId?.name || "Unnamed Product"}
                         <br />
+                        <br />
+                        <br />
                         <button
                           style={{
                             fontSize: "0.95rem",
@@ -312,6 +314,9 @@ const Profile = () => {
                         >
                           Click to preview order
                         </button>
+                        <br />
+                        <br />
+                        <br />
                       </h4>
                       <p className="text-sm">
                         Status:{" "}
