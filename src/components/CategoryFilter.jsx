@@ -72,7 +72,7 @@ export default function CategoryFilter() {
       keyword: "book",
     },
     {
-      name: "Foods",
+      name: "Foods + Drinks",
       icon: <FaUtensils className="w-6 h-6 text-white" />,
       bg: "bg-green-600",
       text: "text-green-700 font-semibold",
