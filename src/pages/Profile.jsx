@@ -250,129 +250,135 @@ const Profile = () => {
           </div>
         </div>
 
-        <div className="col-span-2 bg-gray-50 p-6 rounded-2xl shadow-md">
-          <h3 className="text-lg font-semibold text-orange-500 mb-4">
-            Order Tracking (we will call you soon)
-            <br />
-            <h4>We will call you to ask for Rs.100 to confirm your order.</h4>
-          </h3>
-          <div className="space-y-4">
-            {loadingOrders ? (
-              <p className="text-center text-gray-500">Loading orders...</p>
-            ) : orders.length === 0 ? (
-              <p>No orders found.</p>
-            ) : (
-              orders.map((order, i) => {
-                const timeLeft = cancelTimers[order.orderId] ?? 0;
-                const canCancel = order.status !== "Cancelled" && timeLeft > 0;
+        <div className="col-span-2 bg-white p-6 sm:p-8 rounded-2xl shadow-lg border border-gray-200 transition-all duration-300">
+  <h3 className="text-xl sm:text-2xl font-bold text-orange-500 mb-2">
+    Order Tracking <span className="text-gray-500 text-base font-normal">(We’ll call you soon)</span>
+  </h3>
+  <p className="text-gray-600 mb-6 text-sm sm:text-base">
+    We will call you to confirm your order by asking for Rs.100 as an advance payment.
+  </p>
 
-                return (
-                  <div
-                    key={`${order.orderId}-${i}`}
-                    className={`flex items-center justify-between p-4 rounded-xl border shadow-sm transition-all ${
-                      order.status === "Cancelled"
-                        ? "bg-red-100 hover:bg-red-200"
-                        : "bg-white hover:bg-blue-50"
-                    }`}
+  <div className="space-y-5">
+    {loadingOrders ? (
+      <p className="text-center text-gray-500">Loading orders...</p>
+    ) : orders.length === 0 ? (
+      <p className="text-center text-gray-400 font-medium">No orders found.</p>
+    ) : (
+      orders.map((order, i) => {
+        const timeLeft = cancelTimers[order.orderId] ?? 0;
+        const canCancel = order.status !== "Cancelled" && timeLeft > 0;
+
+        return (
+          <div
+            key={`${order.orderId}-${i}`}
+            className={`flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 p-5 rounded-xl border shadow-sm hover:shadow-md transition-all duration-200 ${
+              order.status === "Cancelled"
+                ? "bg-red-50 hover:bg-red-100 border-red-200"
+                : "bg-gray-50 hover:bg-blue-50 border-gray-200"
+            }`}
+          >
+            <div className="flex-1">
+              <h4
+                className="font-semibold text-lg text-blue-600 underline cursor-pointer mb-2"
+                onClick={() => openPreview(order)}
+              >
+                {order.productId?.name || "Unnamed Product"}
+              </h4>
+
+              <button
+                style={{
+                  fontSize: "0.85rem",
+                  color: "white",
+                  background: "#007bff",
+                  border: "2px solid #007bff",
+                  padding: "6px 12px",
+                  borderRadius: "8px",
+                  cursor: "pointer",
+                  fontWeight: "500",
+                  boxShadow: "0 3px 6px rgba(0,0,0,0.15)",
+                  transition: "all 0.3s ease",
+                  display: "inline-block",
+                }}
+                onMouseEnter={(e) => {
+                  e.target.style.background = "#0056b3";
+                  e.target.style.borderColor = "#0056b3";
+                  e.target.style.transform = "translateY(-2px)";
+                  e.target.style.boxShadow =
+                    "0 6px 10px rgba(0, 91, 187, 0.3)";
+                }}
+                onMouseLeave={(e) => {
+                  e.target.style.background = "#007bff";
+                  e.target.style.borderColor = "#007bff";
+                  e.target.style.transform = "translateY(0)";
+                  e.target.style.boxShadow =
+                    "0 3px 6px rgba(0,0,0,0.15)";
+                }}
+              >
+                Click to preview order
+              </button>
+
+              <div className="mt-3 space-y-1 text-sm">
+                <p>
+                  <span className="font-medium text-gray-700">Status:</span>{" "}
+                  <span className="font-semibold">{order.status}</span>
+                </p>
+                <p>
+                  <span className="font-medium text-gray-700">Order ID:</span>{" "}
+                  <span className="font-semibold text-gray-800">{order.orderId}</span>
+                </p>
+                {canCancel && (
+                  <p className="text-gray-600">
+                    Time left to cancel:{" "}
+                    <span className="font-semibold text-gray-900">
+                      {formatTime(timeLeft)}
+                    </span>
+                  </p>
+                )}
+                {!canCancel && order.status !== "Cancelled" && (
+                  <p className="text-red-500 font-semibold">Can't Cancel</p>
+                )}
+              </div>
+            </div>
+
+            <div className="flex items-center gap-3 sm:gap-4">
+              {order.status === "Cancelled" ? (
+                <FaTimesCircle className="text-red-500 text-xl sm:text-2xl" />
+              ) : order.status === "Delivered" ? (
+                <FaCheckCircle className="text-green-500 text-xl sm:text-2xl" />
+              ) : (
+                <FaTruck className="text-blue-500 text-xl sm:text-2xl" />
+              )}
+
+              {canCancel ? (
+                cancellingOrderId === order.orderId ? (
+                  <Loader />
+                ) : (
+                  <button
+                    onClick={() =>
+                      handleCancelOrder(order.orderId, order.isCustom)
+                    }
+                    className="px-4 py-2 text-sm font-semibold rounded-md bg-orange-500 hover:bg-orange-600 text-white transition-all duration-200 shadow-sm hover:shadow-md"
                   >
-                    <div>
-                      <h4
-                        className="font-semibold text-lg text-blue-600 cursor-pointer underline"
-                        onClick={() => openPreview(order)}
-                      >
-                        {order.productId?.name || "Unnamed Product"}
-                        <button
-                          style={{
-                            fontSize: "0.85rem",
-                            color: "white",
-                            background: "#007bff",
-                            border: "2px solid #007bff",
-                            padding: "8px 14px",
-                            borderRadius: "8px",
-                            cursor: "pointer",
-                            fontWeight: "500",
-                            boxShadow: "0 3px 6px rgba(0,0,0,0.15)",
-                            transition: "all 0.3s ease",
-                            display: "inline-block",
-                          }}
-                          onMouseEnter={(e) => {
-                            e.target.style.background = "#0056b3";
-                            e.target.style.borderColor = "#0056b3";
-                            e.target.style.transform = "translateY(-2px)";
-                            e.target.style.boxShadow =
-                              "0 6px 10px rgba(0, 91, 187, 0.3)";
-                          }}
-                          onMouseLeave={(e) => {
-                            e.target.style.background = "#007bff";
-                            e.target.style.borderColor = "#007bff";
-                            e.target.style.transform = "translateY(0)";
-                            e.target.style.boxShadow =
-                              "0 3px 6px rgba(0,0,0,0.15)";
-                          }}
-                        >
-                          Click to preview order
-                        </button>
-                      </h4>
-                      <p className="text-sm">
-                        Status:{" "}
-                        <span className="font-medium">{order.status}</span>
-                      </p>
-                      <p className="text-sm">
-                        id: <span className="font-medium">{order.orderId}</span>
-                      </p>
-                      {canCancel && (
-                        <p className="text-sm text-gray-500">
-                          Time left to cancel:{" "}
-                          <span className="font-semibold">
-                            {formatTime(timeLeft)}
-                          </span>
-                        </p>
-                      )}
-                      {!canCancel && order.status !== "Cancelled" && (
-                        <p className="text-sm text-red-500 font-semibold">
-                          Can't Cancel
-                        </p>
-                      )}
-                    </div>
-                    <div className="flex gap-4 items-center">
-                      {order.status === "Cancelled" ? (
-                        <FaTimesCircle className="text-red-500 text-xl" />
-                      ) : order.status === "Delivered" ? (
-                        <FaCheckCircle className="text-green-500 text-xl" />
-                      ) : (
-                        <FaTruck className="text-blue-500 text-xl" />
-                      )}
-                      {canCancel ? (
-                        cancellingOrderId === order.orderId ? (
-                          <>
-                            <Loader />{" "}
-                            {/* ✅ Show loader only for the specific order */}
-                          </>
-                        ) : (
-                          <button
-                            onClick={() =>
-                              handleCancelOrder(order.orderId, order.isCustom)
-                            }
-                            className="px-3 py-1 text-sm rounded-md font-semibold transition-all duration-200 bg-orange-500 hover:bg-orange-600 text-white"
-                          >
-                            Cancel Order
-                          </button>
-                        )
-                      ) : (
-                        <button
-                          disabled
-                          className="px-3 py-1 text-sm rounded-md font-semibold bg-gray-400 text-white cursor-not-allowed"
-                        >
-                          Can't Cancel
-                        </button>
-                      )}
-                    </div>
-                  </div>
-                );
-              })
-            )}
+                    Cancel Order
+                  </button>
+                )
+              ) : (
+                <button
+                  disabled
+                  className="px-4 py-2 text-sm font-semibold rounded-md bg-gray-400 text-white cursor-not-allowed"
+                >
+                  Can't Cancel
+                </button>
+              )}
+            </div>
           </div>
-        </div>
+        );
+      })
+    )}
+  </div>
+</div>
+
+
       </div>
 
       <div className="mt-10 grid grid-cols-1 md:grid-cols-2 gap-10 items-start">
