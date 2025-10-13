@@ -7,6 +7,7 @@ import {
   FaTshirt,
   FaUserEdit,
   FaDumbbell,
+  FaListUl,
 } from "react-icons/fa";
 import { MdLocalGroceryStore } from "react-icons/md";
 
@@ -14,6 +15,13 @@ export default function CategoryFilter() {
   const navigate = useNavigate();
 
   const categories = [
+    {
+      name: "All",
+      icon: <FaListUl className="w-6 h-6 text-black" />,
+      bg: "bg-gray-200",
+      text: "text-gray-800 font-semibold",
+      keyword: "", // 👈 empty so it shows all
+    },
     {
       name: "Gym + Supplement",
       icon: <FaDumbbell className="w-6 h-6 text-white" />,
@@ -65,7 +73,11 @@ export default function CategoryFilter() {
           <div
             key={cat.name}
             className="flex flex-col items-center justify-center space-y-1 transition-transform hover:scale-105 cursor-pointer"
-            onClick={() => navigate(`/category?type=${cat.keyword}`)}
+            onClick={() =>
+              cat.keyword
+                ? navigate(`/category?type=${cat.keyword}`)
+                : navigate(`/category`) // 👈 shows all products
+            }
           >
             <div className={`p-3 rounded-full ${cat.bg}`}>
               {cat.icon}
