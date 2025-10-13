@@ -11,10 +11,13 @@ const CartPage = () => {
   const [showCheckoutModal, setShowCheckoutModal] = useState(false); // ✅ Modal toggle
   const [location, setLocation] = useState(""); // ✅ Capture location
   const [checkoutLoading, setCheckoutLoading] = useState(false); // ✅ Loading for order
+  const [cmsg, setCmsg] = useState(""); 
 
   useEffect(() => {
     axios
-      .get("https://nepcart-backend.onrender.com/api/cart", { withCredentials: true })
+      .get("https://nepcart-backend.onrender.com/api/cart", {
+        withCredentials: true,
+      })
       .then((res) => {
         const withQuantity = res.data.map((item) => ({
           ...item,
@@ -44,9 +47,12 @@ const CartPage = () => {
 
   const handleRemove = async (_id) => {
     try {
-      await axios.delete(`https://nepcart-backend.onrender.com/api/cart/remove/${_id}`, {
-        withCredentials: true,
-      });
+      await axios.delete(
+        `https://nepcart-backend.onrender.com/api/cart/remove/${_id}`,
+        {
+          withCredentials: true,
+        }
+      );
 
       setCartItems((prev) => prev.filter((item) => item._id !== _id));
       alert("Removed from cart ✅");
@@ -75,6 +81,7 @@ const CartPage = () => {
         productId: cartItems[0]?._id, // Use one primary product or null if you don’t need this
         userId: user._id,
         location,
+        cmsg,
         totalPrice: parseFloat(grandTotal),
         products: cartItems.map((item) => ({
           productId: item._id,
@@ -82,9 +89,13 @@ const CartPage = () => {
         })),
       };
 
-      const res = await axios.post("https://nepcart-backend.onrender.com/purchase", purchaseData, {
-        withCredentials: true,
-      });
+      const res = await axios.post(
+        "https://nepcart-backend.onrender.com/purchase",
+        purchaseData,
+        {
+          withCredentials: true,
+        }
+      );
 
       if (res.status === 201) {
         alert("Order sent successfully ✅");
@@ -126,13 +137,17 @@ const CartPage = () => {
                   alt={item.name}
                   className="rounded-xl mb-3 w-full h-[240px] object-cover object-center"
                 />
-                <h2 className="text-base font-semibold text-blue-900">{item.name}</h2>
+                <h2 className="text-base font-semibold text-blue-900">
+                  {item.name}
+                </h2>
                 <p className="text-gray-500 text-sm mb-2">
                   {item.desc || "Product description not available."}
                 </p>
 
                 <div className="flex items-center justify-between mt-2">
-                  <span className="text-orange-500 font-bold text-base">₹{item.price}</span>
+                  <span className="text-orange-500 font-bold text-base">
+                    ₹{item.price}
+                  </span>
                   <div className="flex items-center space-x-2">
                     <button
                       onClick={(e) => {
@@ -143,7 +158,9 @@ const CartPage = () => {
                     >
                       -
                     </button>
-                    <span className="text-gray-700 font-medium">{item.quantity}</span>
+                    <span className="text-gray-700 font-medium">
+                      {item.quantity}
+                    </span>
                     <button
                       onClick={(e) => {
                         e.stopPropagation();
@@ -177,13 +194,27 @@ const CartPage = () => {
           {/* Right Section - Summary */}
           <div className="w-full lg:w-[35%] bg-gray-50 rounded-2xl shadow-lg p-6 space-y-6">
             <div>
-              <label className="block text-gray-700 font-semibold mb-1">Delivery Location</label>
+              <label className="block text-gray-700 font-semibold mb-1">
+                Delivery Location
+              </label>
               <input
                 type="text"
                 value={location}
                 onChange={(e) => setLocation(e.target.value)}
                 placeholder="Enter your location"
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-400"
+              />
+            </div>
+            <div>
+              <label className="block text-gray-700 font-semibold mb-1">
+                Custom Specification Message
+              </label>
+              <textarea
+                value={cmsg}
+                onChange={(e) => setCmsg(e.target.value)}
+                placeholder="Add any special requests — for example, preferred size, color, or extra specifications (optional)"
+                className="w-full border border-gray-300 px-4 py-3 rounded-lg mb-4 placeholder-gray-500 text-sm sm:text-base resize-none"
+                rows={3}
               />
             </div>
 
@@ -215,7 +246,10 @@ const CartPage = () => {
 
       {/* ✅ Product Modal */}
       {selectedProduct && (
-        <ProductPreviewModal product={selectedProduct} onClose={() => setSelectedProduct(null)} />
+        <ProductPreviewModal
+          product={selectedProduct}
+          onClose={() => setSelectedProduct(null)}
+        />
       )}
 
       {/* ✅ Checkout Modal */}
@@ -229,11 +263,14 @@ const CartPage = () => {
               &times;
             </button>
 
-            <h2 className="text-2xl font-bold mb-4 text-gray-800">Confirm Checkout</h2>
+            <h2 className="text-2xl font-bold mb-4 text-gray-800">
+              Confirm Checkout
+            </h2>
             <p className="text-gray-600 mb-6">
-              Are you sure you want to confirm this order? Your cart will be processed.
+              Are you sure you want to confirm this order? Your cart will be
+              processed.
             </p>
-            <br/>
+            <br />
             <h4>We will call you to ask for Rs.100 to confirm your order.</h4>
 
             {checkoutLoading ? (
