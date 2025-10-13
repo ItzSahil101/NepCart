@@ -286,6 +286,7 @@ const Profile = () => {
               </h4>
 
               <button
+              onClick={()=>{openPreview(order)}}
                 style={{
                   fontSize: "0.85rem",
                   color: "white",
