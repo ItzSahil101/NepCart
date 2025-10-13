@@ -1,7 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import {
   DevicePhoneMobileIcon,
-  HomeModernIcon,
 } from "@heroicons/react/24/outline";
 import {
   FaTshirt,
@@ -9,8 +8,8 @@ import {
   FaDumbbell,
   FaListUl,
   FaBook,
+  FaUtensils,
 } from "react-icons/fa";
-import { MdLocalGroceryStore } from "react-icons/md";
 
 export default function CategoryFilter() {
   const navigate = useNavigate();
@@ -21,7 +20,7 @@ export default function CategoryFilter() {
       icon: <FaListUl className="w-6 h-6 text-black" />,
       bg: "bg-gray-200",
       text: "text-gray-800 font-semibold",
-      keyword: "", // 👈 empty so it shows all
+      keyword: "",
     },
     {
       name: "Gym + Supplement",
@@ -38,18 +37,11 @@ export default function CategoryFilter() {
       keyword: "tech",
     },
     {
-      name: "Fashion",
+      name: "Clothes",
       icon: <FaTshirt className="w-6 h-6 text-white" />,
       bg: "bg-indigo-700",
       text: "text-indigo-700 font-semibold",
-      keyword: "fashion",
-    },
-    {
-      name: "Kitchen Equipment",
-      icon: <HomeModernIcon className="w-6 h-6 text-white" />,
-      bg: "bg-green-500",
-      text: "text-green-700 font-semibold",
-      keyword: "home",
+      keyword: "clothes",
     },
     {
       name: "Gym Wear",
@@ -58,17 +50,16 @@ export default function CategoryFilter() {
       text: "text-orange-700 font-semibold",
       keyword: "gw",
     },
-    // New categories
     {
       name: "Sports",
-      icon: <FaDumbbell className="w-6 h-6 text-white" />, // or choose a better icon
+      icon: <FaDumbbell className="w-6 h-6 text-white" />,
       bg: "bg-red-500",
       text: "text-red-700 font-semibold",
       keyword: "sport",
     },
     {
       name: "Sketch",
-      icon: <FaTshirt className="w-6 h-6 text-white" />, // pick a suitable icon
+      icon: <FaTshirt className="w-6 h-6 text-white" />,
       bg: "bg-yellow-400",
       text: "text-yellow-700 font-semibold",
       keyword: "sketch",
@@ -79,6 +70,13 @@ export default function CategoryFilter() {
       bg: "bg-purple-500",
       text: "text-purple-700 font-semibold",
       keyword: "book",
+    },
+    {
+      name: "Foods",
+      icon: <FaUtensils className="w-6 h-6 text-white" />,
+      bg: "bg-green-600",
+      text: "text-green-700 font-semibold",
+      keyword: "food",
     },
   ];
 
@@ -92,12 +90,10 @@ export default function CategoryFilter() {
             onClick={() =>
               cat.keyword
                 ? navigate(`/category?type=${cat.keyword}`)
-                : navigate(`/category`) // 👈 shows all products
+                : navigate(`/category`)
             }
           >
-            <div className={`p-3 rounded-full ${cat.bg}`}>
-              {cat.icon}
-            </div>
+            <div className={`p-3 rounded-full ${cat.bg}`}>{cat.icon}</div>
             <span className={`text-sm ${cat.text}`}>{cat.name}</span>
           </div>
         ))}
