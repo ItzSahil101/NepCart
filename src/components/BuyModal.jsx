@@ -7,6 +7,7 @@ import axios from "axios";
 export default function BuyNowModal({ product, quantity = 1, onClose }) {
   const [location, setLocation] = useState("");
   const [loading, setLoading] = useState(false);
+  const [cmsg, setCmsg] = useState("");
 
   const handlePlaceOrder = async () => {
     if (!location.trim()) return alert("Please enter delivery location.");
@@ -20,6 +21,7 @@ export default function BuyNowModal({ product, quantity = 1, onClose }) {
         productId: product._id, // optional, like in cart
         userId: user._id,
         location,
+        cmsg,
         totalPrice: parseFloat(product.price) * quantity,
         products: [
           {
@@ -70,6 +72,14 @@ export default function BuyNowModal({ product, quantity = 1, onClose }) {
           placeholder="Enter your delivery location"
           className="w-full border border-gray-300 px-4 py-2 rounded mb-4"
         />
+        <br />
+        <input
+        type="text"
+        value={cmsg}
+        onChange={(e) => setCmsg(e.target.value)}
+        placeholder="Any additional message (optional)"
+        className="w-full border border-gray-300 px-4 py-2 rounded mb-4"
+      />
 
         {loading ? (
           <Loader />
