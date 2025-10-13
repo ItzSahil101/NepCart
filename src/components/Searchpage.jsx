@@ -5,7 +5,7 @@ import axios from "axios";
 import ProductCard from "./ProductCard";
 import ProductPreviewModal from "./ProductPreviewModal";
 import HeroBanner from "./HeroBanner";
-// import CategoryFilter from "./CategoryFilter";
+import CategoryFilter from "./CategoryFilter";
 import SortFilterBar from "./SortFilterBar";
 
 export default function SearchPage() {
@@ -55,7 +55,7 @@ export default function SearchPage() {
   return (
     <div className="px-4 sm:px-6 lg:px-8">
       <HeroBanner />
-      {/* <CategoryFilter /> */}
+      <CategoryFilter />
       <SortFilterBar onPriceChange={setPriceFilter} />
 
       <section className="mt-8 relative z-0">
