@@ -284,28 +284,30 @@ const Profile = () => {
                         <br />
                         <button
                           style={{
-                            fontSize: "0.9rem",
-                            color: "#555",
-                            textDecoration: "underline",
-                            background: "transparent",
-                            border: "none",
+                            fontSize: "0.95rem",
+                            color: "#333",
+                            background: "white",
+                            border: "2px solid #ff6600",
+                            padding: "10px 18px",
+                            borderRadius: "10px",
                             cursor: "pointer",
+                            fontWeight: "500",
+                            boxShadow: "0 3px 6px rgba(0,0,0,0.1)",
                             transition: "all 0.3s ease",
-                            padding: "6px 10px",
-                            borderRadius: "6px",
                           }}
                           onMouseEnter={(e) => {
-                            e.target.style.color = "#ff6600";
-                            e.target.style.transform = "scale(1.08)";
-                            e.target.style.textDecoration = "none";
-                            e.target.style.background =
-                              "rgba(255, 165, 0, 0.1)";
+                            e.target.style.background = "#ff6600";
+                            e.target.style.color = "white";
+                            e.target.style.transform = "translateY(-3px)";
+                            e.target.style.boxShadow =
+                              "0 8px 15px rgba(255, 102, 0, 0.3)";
                           }}
                           onMouseLeave={(e) => {
-                            e.target.style.color = "#555";
-                            e.target.style.transform = "scale(1)";
-                            e.target.style.textDecoration = "underline";
-                            e.target.style.background = "transparent";
+                            e.target.style.background = "white";
+                            e.target.style.color = "#333";
+                            e.target.style.transform = "translateY(0)";
+                            e.target.style.boxShadow =
+                              "0 3px 6px rgba(0,0,0,0.1)";
                           }}
                         >
                           Click to preview order
