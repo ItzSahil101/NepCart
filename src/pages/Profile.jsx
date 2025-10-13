@@ -281,39 +281,37 @@ const Profile = () => {
                         onClick={() => openPreview(order)}
                       >
                         {order.productId?.name || "Unnamed Product"}
-                        <br />
-                        <br />
                         <button
                           style={{
-                            fontSize: "0.95rem",
-                            color: "#333",
-                            background: "white",
-                            border: "2px solid #ff6600",
-                            padding: "10px 18px",
-                            borderRadius: "10px",
+                            fontSize: "0.85rem",
+                            color: "white",
+                            background: "#007bff",
+                            border: "2px solid #007bff",
+                            padding: "8px 14px",
+                            borderRadius: "8px",
                             cursor: "pointer",
                             fontWeight: "500",
-                            boxShadow: "0 3px 6px rgba(0,0,0,0.1)",
+                            boxShadow: "0 3px 6px rgba(0,0,0,0.15)",
                             transition: "all 0.3s ease",
+                            display: "inline-block",
                           }}
                           onMouseEnter={(e) => {
-                            e.target.style.background = "#ff6600";
-                            e.target.style.color = "white";
-                            e.target.style.transform = "translateY(-3px)";
+                            e.target.style.background = "#0056b3";
+                            e.target.style.borderColor = "#0056b3";
+                            e.target.style.transform = "translateY(-2px)";
                             e.target.style.boxShadow =
-                              "0 8px 15px rgba(255, 102, 0, 0.3)";
+                              "0 6px 10px rgba(0, 91, 187, 0.3)";
                           }}
                           onMouseLeave={(e) => {
-                            e.target.style.background = "white";
-                            e.target.style.color = "#333";
+                            e.target.style.background = "#007bff";
+                            e.target.style.borderColor = "#007bff";
                             e.target.style.transform = "translateY(0)";
                             e.target.style.boxShadow =
-                              "0 3px 6px rgba(0,0,0,0.1)";
+                              "0 3px 6px rgba(0,0,0,0.15)";
                           }}
                         >
                           Click to preview order
                         </button>
-                        <br />
                       </h4>
                       <p className="text-sm">
                         Status:{" "}
