@@ -54,7 +54,9 @@ const Profile = () => {
         setLoggedInUser(user);
 
         const [res1, res2] = await Promise.all([
-          axios.get(`https://nepcart-backend.onrender.com/purchase/user/${user._id}`),
+          axios.get(
+            `https://nepcart-backend.onrender.com/purchase/user/${user._id}`
+          ),
           axios.get(
             `https://nepcart-backend.onrender.com/orderc/custom-orders/user/${user._id}`
           ),
@@ -280,12 +282,38 @@ const Profile = () => {
                       >
                         {order.productId?.name || "Unnamed Product"}
                         <br />
-                        <button className="text-sm text-gray-500 underline">
+                        <button
+                          style={{
+                            fontSize: "0.9rem",
+                            color: "#555",
+                            textDecoration: "underline",
+                            background: "transparent",
+                            border: "none",
+                            cursor: "pointer",
+                            transition: "all 0.3s ease",
+                            padding: "6px 10px",
+                            borderRadius: "6px",
+                          }}
+                          onMouseEnter={(e) => {
+                            e.target.style.color = "#ff6600";
+                            e.target.style.transform = "scale(1.08)";
+                            e.target.style.textDecoration = "none";
+                            e.target.style.background =
+                              "rgba(255, 165, 0, 0.1)";
+                          }}
+                          onMouseLeave={(e) => {
+                            e.target.style.color = "#555";
+                            e.target.style.transform = "scale(1)";
+                            e.target.style.textDecoration = "underline";
+                            e.target.style.background = "transparent";
+                          }}
+                        >
                           Click to preview order
                         </button>
                       </h4>
                       <p className="text-sm">
-                        Status: <span className="font-medium">{order.status}</span>
+                        Status:{" "}
+                        <span className="font-medium">{order.status}</span>
                       </p>
                       <p className="text-sm">
                         id: <span className="font-medium">{order.orderId}</span>
@@ -293,11 +321,15 @@ const Profile = () => {
                       {canCancel && (
                         <p className="text-sm text-gray-500">
                           Time left to cancel:{" "}
-                          <span className="font-semibold">{formatTime(timeLeft)}</span>
+                          <span className="font-semibold">
+                            {formatTime(timeLeft)}
+                          </span>
                         </p>
                       )}
                       {!canCancel && order.status !== "Cancelled" && (
-                        <p className="text-sm text-red-500 font-semibold">Can't Cancel</p>
+                        <p className="text-sm text-red-500 font-semibold">
+                          Can't Cancel
+                        </p>
                       )}
                     </div>
                     <div className="flex gap-4 items-center">
@@ -311,7 +343,8 @@ const Profile = () => {
                       {canCancel ? (
                         cancellingOrderId === order.orderId ? (
                           <>
-                            <Loader /> {/* ✅ Show loader only for the specific order */}
+                            <Loader />{" "}
+                            {/* ✅ Show loader only for the specific order */}
                           </>
                         ) : (
                           <button
@@ -356,7 +389,9 @@ const Profile = () => {
               <ul className="space-y-3">
                 {topUsers.map((user, index) => (
                   <li key={index} className="flex justify-between">
-                    <span className="font-medium text-gray-800">{user.userName}</span>
+                    <span className="font-medium text-gray-800">
+                      {user.userName}
+                    </span>
                     <span className="text-sm text-gray-600">
                       {user.purchaseProducts} items
                     </span>
@@ -396,7 +431,9 @@ const Profile = () => {
             >
               &times;
             </button>
-            <h2 className="text-2xl font-bold mb-4 text-orange-600">Product Preview</h2>
+            <h2 className="text-2xl font-bold mb-4 text-orange-600">
+              Product Preview
+            </h2>
             {selectedProduct.productId?.url ? (
               <img
                 src={selectedProduct.productId.url}
