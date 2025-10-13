@@ -1,4 +1,3 @@
-// pages/CategoryProducts.jsx
 import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import ProductCard from "./ProductCard";
@@ -32,20 +31,23 @@ export default function CategoryProducts() {
         product.category?.toLowerCase().includes(categoryKeyword.toLowerCase())
       );
       setFiltered(filteredItems);
+    } else {
+      setFiltered(products);
     }
   }, [categoryKeyword, products]);
 
-  // Apply price filter on top of category filter
-  const finalProducts = priceFilter === "Any"
-    ? filtered
-    : filtered.filter((p) => {
-        const price = p.price;
-        if (!price) return false;
-        if (priceFilter === "Under ₹500") return price < 500;
-        if (priceFilter === "₹500–1000") return price >= 500 && price <= 1000;
-        if (priceFilter === "₹1000+") return price > 1000;
-        return true;
-      });
+  // Apply price filter
+  const finalProducts =
+    priceFilter === "Any"
+      ? filtered
+      : filtered.filter((p) => {
+          const price = p.price;
+          if (!price) return false;
+          if (priceFilter === "Under ₹500") return price < 500;
+          if (priceFilter === "₹500–1000") return price >= 500 && price <= 1000;
+          if (priceFilter === "₹1000+") return price > 1000;
+          return true;
+        });
 
   return (
     <div className="px-4 sm:px-6 lg:px-8">
@@ -55,7 +57,10 @@ export default function CategoryProducts() {
 
       <section className="mt-8 relative z-0">
         <h2 className="text-lg sm:text-xl font-semibold mb-4">
-          <b>Category: {categoryKeyword?.toUpperCase()}</b>
+          <b>
+            Category:{" "}
+            {categoryKeyword ? categoryKeyword.toUpperCase() : "All Products"}
+          </b>
         </h2>
 
         {finalProducts.length === 0 ? (
