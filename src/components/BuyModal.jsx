@@ -31,9 +31,13 @@ export default function BuyNowModal({ product, quantity = 1, onClose }) {
         ],
       };
 
-      const res = await axios.post("https://nepcart-backend.onrender.com/purchase", purchaseData, {
-        withCredentials: true,
-      });
+      const res = await axios.post(
+        "https://nepcart-backend.onrender.com/purchase",
+        purchaseData,
+        {
+          withCredentials: true,
+        }
+      );
 
       if (res.status === 201) {
         alert("Order placed successfully ✅");
@@ -74,13 +78,13 @@ export default function BuyNowModal({ product, quantity = 1, onClose }) {
         />
         <br />
         <input
-        type="text"
-        value={cmsg}
-        onChange={(e) => setCmsg(e.target.value)}
-        placeholder="Any additional message like what else specification
-        you want in product like size, color etc.. (optional)"
-        className="w-full border border-gray-300 px-8 py-2 rounded mb-4"
-      />
+          type="text"
+          value={cmsg}
+          onChange={(e) => setCmsg(e.target.value)}
+          placeholder="Add any special requests — for example, preferred size, color, or extra specifications (optional)"
+          className="w-full border border-gray-300 px-4 py-3 rounded-lg mb-4 placeholder-gray-500 text-sm sm:text-base"
+          style={{ minHeight: "60px" }}
+        />
 
         {loading ? (
           <Loader />
