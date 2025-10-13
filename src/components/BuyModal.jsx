@@ -77,13 +77,12 @@ export default function BuyNowModal({ product, quantity = 1, onClose }) {
           className="w-full border border-gray-300 px-4 py-2 rounded mb-4"
         />
         <br />
-        <input
-          type="text"
+        <textarea
           value={cmsg}
           onChange={(e) => setCmsg(e.target.value)}
           placeholder="Add any special requests — for example, preferred size, color, or extra specifications (optional)"
-          className="w-full border border-gray-300 px-4 py-3 rounded-lg mb-4 placeholder-gray-500 text-sm sm:text-base"
-          style={{ minHeight: "60px" }}
+          className="w-full border border-gray-300 px-4 py-3 rounded-lg mb-4 placeholder-gray-500 text-sm sm:text-base resize-none"
+          rows={3}
         />
 
         {loading ? (
