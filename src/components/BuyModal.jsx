@@ -79,7 +79,7 @@ export default function BuyNowModal({ product, quantity = 1, onClose }) {
         onChange={(e) => setCmsg(e.target.value)}
         placeholder="Any additional message like what else specification
         you want in product like size, color etc.. (optional)"
-        className="w-full border border-gray-300 px-4 py-2 rounded mb-4"
+        className="w-full border border-gray-300 px-8 py-2 rounded mb-4"
       />
 
         {loading ? (
