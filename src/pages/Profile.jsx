@@ -279,6 +279,10 @@ const Profile = () => {
                         onClick={() => openPreview(order)}
                       >
                         {order.productId?.name || "Unnamed Product"}
+                        <br />
+                        <button className="text-sm text-gray-500 underline">
+                          Click to preview order
+                        </button>
                       </h4>
                       <p className="text-sm">
                         Status: <span className="font-medium">{order.status}</span>
@@ -286,10 +290,6 @@ const Profile = () => {
                       <p className="text-sm">
                         id: <span className="font-medium">{order.orderId}</span>
                       </p>
-                      <p className="text-sm">
-                        Custom msg: <span className="font-medium">{order.cmsg}</span>
-                      </p>
-                      {console.log(order)}
                       {canCancel && (
                         <p className="text-sm text-gray-500">
                           Time left to cancel:{" "}
