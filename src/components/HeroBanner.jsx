@@ -8,7 +8,7 @@ export default function HeroBanner() {
       {/* Text Section */}
       <div className="text-center md:text-left space-y-4">
         <h1 className="text-white text-4xl sm:text-5xl md:text-6xl font-extrabold drop-shadow-lg uppercase tracking-wide">
-          MEGA SALE
+          FREE DELIVERY
         </h1>
         <p className="text-yellow-100 text-2xl sm:text-3xl md:text-4xl font-black drop-shadow-md animate-pulse">
           FREE DELIVERY
