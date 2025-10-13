@@ -9,7 +9,7 @@ export default function Home() {
   return (
     <div className="px-4 sm:px-6 lg:px-8">
       <HeroBanner />
-      {/* <CategoryFilter /> */}
+      <CategoryFilter />
       <SortFilterBar />
       <FeaturedProducts />
       {/* <TrendingSection /> */}
