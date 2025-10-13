@@ -1,7 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import {
-  DevicePhoneMobileIcon,
-} from "@heroicons/react/24/outline";
+import { DevicePhoneMobileIcon } from "@heroicons/react/24/outline";
 import {
   FaTshirt,
   FaUserEdit,
@@ -41,8 +39,9 @@ export default function CategoryFilter() {
       icon: <FaTshirt className="w-6 h-6 text-white" />,
       bg: "bg-indigo-700",
       text: "text-indigo-700 font-semibold",
-      keyword: "clothes",
+      keyword: "fashion",
     },
+
     {
       name: "Gym Wear",
       icon: <FaUserEdit className="w-6 h-6 text-white" />,
