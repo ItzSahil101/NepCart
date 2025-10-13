@@ -289,6 +289,7 @@ const Profile = () => {
                       <p className="text-sm">
                         Custom msg: <span className="font-medium">{order.cmsg}</span>
                       </p>
+                      {console.log(order)}
                       {canCancel && (
                         <p className="text-sm text-gray-500">
                           Time left to cancel:{" "}
