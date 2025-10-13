@@ -8,6 +8,7 @@ import {
   FaUserEdit,
   FaDumbbell,
   FaListUl,
+  FaBook,
 } from "react-icons/fa";
 import { MdLocalGroceryStore } from "react-icons/md";
 
@@ -57,12 +58,27 @@ export default function CategoryFilter() {
       text: "text-orange-700 font-semibold",
       keyword: "gw",
     },
+    // New categories
     {
-      name: "Extra",
-      icon: <MdLocalGroceryStore className="w-6 h-6 text-white" />,
-      bg: "bg-gray-600",
-      text: "text-gray-700 font-semibold",
-      keyword: "extra",
+      name: "Sports",
+      icon: <FaDumbbell className="w-6 h-6 text-white" />, // or choose a better icon
+      bg: "bg-red-500",
+      text: "text-red-700 font-semibold",
+      keyword: "sport",
+    },
+    {
+      name: "Sketch",
+      icon: <FaTshirt className="w-6 h-6 text-white" />, // pick a suitable icon
+      bg: "bg-yellow-400",
+      text: "text-yellow-700 font-semibold",
+      keyword: "sketch",
+    },
+    {
+      name: "Books",
+      icon: <FaBook className="w-6 h-6 text-white" />,
+      bg: "bg-purple-500",
+      text: "text-purple-700 font-semibold",
+      keyword: "book",
     },
   ];
 
