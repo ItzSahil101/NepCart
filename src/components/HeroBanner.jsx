@@ -1,10 +1,12 @@
 // src/components/HeroBanner.jsx
-import { ShoppingCartIcon, ArrowDownTrayIcon } from '@heroicons/react/24/outline'
+import {
+  ShoppingCartIcon,
+  ArrowDownTrayIcon,
+} from "@heroicons/react/24/outline";
 
 export default function HeroBanner() {
   return (
     <div className="relative overflow-hidden rounded-2xl p-8 mt-6 flex flex-col md:flex-row items-center justify-between bg-gradient-to-r from-orange-400 via-red-500 to-yellow-300 animate-gradient-x shadow-2xl">
-      
       {/* Text Section */}
       <div className="text-center md:text-left space-y-4">
         <h1 className="text-white text-4xl sm:text-5xl md:text-6xl font-extrabold drop-shadow-lg uppercase tracking-wide">
@@ -17,14 +19,13 @@ export default function HeroBanner() {
           Grab your favorites before they run out!
         </p>
 
-        {/* ✅ Download Button */}
         <a
-          href="./NepMart.apk"
+          href="/NepMart.apk"
           download
           className="inline-flex items-center gap-2 bg-white text-orange-600 font-bold px-5 py-3 rounded-xl shadow-lg hover:bg-orange-100 active:scale-95 transition-transform duration-200 mt-4"
         >
           <ArrowDownTrayIcon className="w-6 h-6" />
-          Download App
+          Download App-
         </a>
       </div>
 
@@ -36,9 +37,15 @@ export default function HeroBanner() {
       {/* Optional Gradient Animation */}
       <style jsx>{`
         @keyframes gradient-x {
-          0% { background-position: 0% 50%; }
-          50% { background-position: 100% 50%; }
-          100% { background-position: 0% 50%; }
+          0% {
+            background-position: 0% 50%;
+          }
+          50% {
+            background-position: 100% 50%;
+          }
+          100% {
+            background-position: 0% 50%;
+          }
         }
         .animate-gradient-x {
           background-size: 200% 200%;
@@ -46,5 +53,5 @@ export default function HeroBanner() {
         }
       `}</style>
     </div>
-  )
+  );
 }
