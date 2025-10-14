@@ -21,7 +21,7 @@ export default function CategoryFilter() {
       keyword: "",
     },
     {
-      name: "Gym + Supplement",
+      name: "Gym + Supplement + Diet",
       icon: <FaDumbbell className="w-6 h-6 text-white" />,
       bg: "bg-pink-500",
       text: "text-pink-700 font-semibold",
