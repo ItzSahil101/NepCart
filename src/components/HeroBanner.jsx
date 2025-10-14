@@ -45,12 +45,12 @@ export default function HeroBanner() {
         </a>
 
         {/* Total Orders */}
-        <div className="mt-4 mx-2 inline-flex items-center gap-2 bg-white/20 text-white px-4 py-2 rounded-xl shadow-md backdrop-blur-sm">
+        {/* <div className="mt-4 mx-2 inline-flex items-center gap-2 bg-white/20 text-white px-4 py-2 rounded-xl shadow-md backdrop-blur-sm">
           <UserIcon className="w-6 h-6" />
           <span className="text-lg sm:text-xl md:text-2xl font-bold">
             {totalOrders}+ Users Ordered
           </span>
-        </div>
+        </div> */}
       </div>
 
       {/* Icon Section */}
