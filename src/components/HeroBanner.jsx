@@ -19,7 +19,7 @@ export default function HeroBanner() {
 
         {/* ✅ Download Button */}
         <a
-          href="/NepMart.apk"
+          href="./NepMart.apk"
           download
           className="inline-flex items-center gap-2 bg-white text-orange-600 font-bold px-5 py-3 rounded-xl shadow-lg hover:bg-orange-100 active:scale-95 transition-transform duration-200 mt-4"
         >
