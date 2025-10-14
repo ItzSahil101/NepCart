@@ -21,7 +21,7 @@ export default function CategoryFilter() {
       keyword: "",
     },
     {
-      name: "Gym + Supplement + Diet",
+      name: "Gym + Suppliment",
       icon: <FaDumbbell className="w-6 h-6 text-white" />,
       bg: "bg-pink-500",
       text: "text-pink-700 font-semibold",
@@ -43,7 +43,7 @@ export default function CategoryFilter() {
     },
 
     {
-      name: "Gym Wear",
+      name: "Gym Wear + Diet",
       icon: <FaUserEdit className="w-6 h-6 text-white" />,
       bg: "bg-orange-500",
       text: "text-orange-700 font-semibold",
