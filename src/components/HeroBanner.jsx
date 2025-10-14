@@ -13,6 +13,7 @@ export default function HeroBanner() {
           "https://nepcart-backend.onrender.com/api/product/total-orders"
         );
         setTotalOrders(res.data.totalOrders);
+        console.log(res);
       } catch (err) {
         console.error("Error fetching total orders:", err);
       }
