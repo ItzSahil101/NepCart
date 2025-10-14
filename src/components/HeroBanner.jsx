@@ -1,10 +1,25 @@
 // src/components/HeroBanner.jsx
-import {
-  ShoppingCartIcon,
-  ArrowDownTrayIcon,
-} from "@heroicons/react/24/outline";
+import React, { useEffect, useState } from "react";
+import { ShoppingCartIcon, ArrowDownTrayIcon, UserIcon } from "@heroicons/react/24/outline";
+import axios from "axios";
 
 export default function HeroBanner() {
+  const [totalOrders, setTotalOrders] = useState(0);
+
+  useEffect(() => {
+    const fetchTotalOrders = async () => {
+      try {
+        const res = await axios.get(
+          "https://nepcart-backend.onrender.com/api/product/total-orders"
+        );
+        setTotalOrders(res.data.totalOrders);
+      } catch (err) {
+        console.error("Error fetching total orders:", err);
+      }
+    };
+    fetchTotalOrders();
+  }, []);
+
   return (
     <div className="relative overflow-hidden rounded-2xl p-8 mt-6 flex flex-col md:flex-row items-center justify-between bg-gradient-to-r from-orange-400 via-red-500 to-yellow-300 animate-gradient-x shadow-2xl">
       {/* Text Section */}
@@ -25,8 +40,16 @@ export default function HeroBanner() {
           className="inline-flex items-center gap-2 bg-white text-orange-600 font-bold px-5 py-3 rounded-xl shadow-lg hover:bg-orange-100 active:scale-95 transition-transform duration-200 mt-4"
         >
           <ArrowDownTrayIcon className="w-6 h-6" />
-          Download App-
+          Download App
         </a>
+
+        {/* Total Orders */}
+        <div className="mt-4 inline-flex items-center gap-2 bg-white/20 text-white px-4 py-2 rounded-xl shadow-md backdrop-blur-sm">
+          <UserIcon className="w-6 h-6" />
+          <span className="text-lg sm:text-xl md:text-2xl font-bold">
+            {totalOrders}+ Users Ordered
+          </span>
+        </div>
       </div>
 
       {/* Icon Section */}
