@@ -1,5 +1,5 @@
 // src/components/HeroBanner.jsx
-import { ShoppingCartIcon } from '@heroicons/react/24/outline'
+import { ShoppingCartIcon, ArrowDownTrayIcon } from '@heroicons/react/24/outline'
 
 export default function HeroBanner() {
   return (
@@ -11,15 +11,25 @@ export default function HeroBanner() {
           FREE DELIVERY
         </h1>
         <p className="text-yellow-100 text-2xl sm:text-3xl md:text-4xl font-black drop-shadow-md animate-pulse">
-          FREE DELIVERY
+          Download Our App Now!
         </p>
         <p className="text-white text-lg sm:text-xl md:text-2xl font-semibold mt-2">
           Grab your favorites before they run out!
         </p>
+
+        {/* ✅ Download Button */}
+        <a
+          href="/NepMart.apk"
+          download
+          className="inline-flex items-center gap-2 bg-white text-orange-600 font-bold px-5 py-3 rounded-xl shadow-lg hover:bg-orange-100 active:scale-95 transition-transform duration-200 mt-4"
+        >
+          <ArrowDownTrayIcon className="w-6 h-6" />
+          Download App
+        </a>
       </div>
 
       {/* Icon Section */}
-      <div className="mt-6 md:mt-0">
+      <div className="mt-8 md:mt-0">
         <ShoppingCartIcon className="w-20 h-20 sm:w-24 sm:h-24 text-white animate-bounce" />
       </div>
 
