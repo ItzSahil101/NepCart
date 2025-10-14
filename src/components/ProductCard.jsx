@@ -45,7 +45,7 @@ export default function ProductCard({ product, onPreview }) {
 
         <h3 className="text-sm font-semibold">{product.name}</h3>
         <p className="text-sm text-gray-600 mb-1">
-          Npr{product.price}
+          Npr. {product.price}
           {product.discount && (
             <span className="text-red-500 ml-2 font-bold">
               ({product.discount} OFF)
