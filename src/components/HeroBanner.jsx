@@ -1,10 +1,11 @@
 // src/components/HeroBanner.jsx
 import React, { useEffect, useState } from "react";
-import { ShoppingCartIcon, ArrowDownTrayIcon, UserIcon } from "@heroicons/react/24/outline";
+import { ShoppingCartIcon, ArrowDownTrayIcon, UserIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import axios from "axios";
 
 export default function HeroBanner() {
   const [totalOrders, setTotalOrders] = useState(0);
+  const [showModal, setShowModal] = useState(false);
 
   useEffect(() => {
     const fetchTotalOrders = async () => {
@@ -23,8 +24,9 @@ export default function HeroBanner() {
 
   return (
     <div className="relative overflow-hidden rounded-2xl p-8 mt-6 flex flex-col md:flex-row items-center justify-between bg-gradient-to-r from-orange-400 via-red-500 to-yellow-300 animate-gradient-x shadow-2xl">
+
       {/* Text Section */}
-      <div className="text-center md:text-left space-y-4">
+      <div className="text-center md:text-left space-y-4 relative">
         <h1 className="text-white text-4xl sm:text-5xl md:text-6xl font-extrabold drop-shadow-lg uppercase tracking-wide">
           FREE DELIVERY
         </h1>
@@ -44,19 +46,47 @@ export default function HeroBanner() {
           Download App
         </a>
 
-        {/* Total Orders */}
-        {/* <div className="mt-4 mx-2 inline-flex items-center gap-2 bg-white/20 text-white px-4 py-2 rounded-xl shadow-md backdrop-blur-sm">
-          <UserIcon className="w-6 h-6" />
-          <span className="text-lg sm:text-xl md:text-2xl font-bold">
-            {totalOrders}+ Users Ordered
-          </span>
-        </div> */}
+        {/* See Updates Button */}
+        <button
+          onClick={() => setShowModal(true)}
+          className="absolute bottom-0 left-0 mb-4 ml-4 px-5 py-3 bg-white text-gray-800 font-semibold rounded-xl shadow-lg hover:shadow-2xl hover:bg-gray-100 transition-all duration-200"
+        >
+          See Updates
+        </button>
       </div>
 
       {/* Icon Section */}
       <div className="mt-8 md:mt-0">
         <ShoppingCartIcon className="w-20 h-20 sm:w-24 sm:h-24 text-white animate-bounce" />
       </div>
+
+      {/* Update Modal */}
+      {showModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
+          <div className="bg-white rounded-2xl shadow-xl w-[60%] h-[80%] p-6 relative flex flex-col">
+            <button
+              onClick={() => setShowModal(false)}
+              className="absolute top-4 right-4 p-2 rounded-full hover:bg-gray-200 transition"
+            >
+              <XMarkIcon className="w-6 h-6 text-gray-800" />
+            </button>
+            <h2 className="text-2xl font-bold mb-4">Latest Updates</h2>
+            <div className="overflow-y-auto flex-1 space-y-4">
+              <div className="p-4 bg-gray-50 rounded-xl shadow-sm border border-gray-200">
+                <p className="text-gray-800 font-medium">
+                  • Uninstall the NepMart app and download the APK from the website again. We updated the app icon for better visibility.
+                </p>
+              </div>
+              <div className="p-4 bg-gray-50 rounded-xl shadow-sm border border-gray-200">
+                <p className="text-gray-800 font-medium">
+                  • Demo update: New app icon and minor performance improvements.
+                </p>
+              </div>
+              {/* You can add more updates here */}
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Optional Gradient Animation */}
       <style jsx>{`
