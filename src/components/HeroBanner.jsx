@@ -1,4 +1,3 @@
-// src/components/HeroBanner.jsx
 import React, { useEffect, useState } from "react";
 import { ShoppingCartIcon, ArrowDownTrayIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import axios from "axios";
@@ -6,7 +5,10 @@ import axios from "axios";
 export default function HeroBanner() {
   const [totalOrders, setTotalOrders] = useState(0);
   const [showModal, setShowModal] = useState(false);
+  const [updates, setUpdates] = useState([]); // store updates from API
+  const [loading, setLoading] = useState(false);
 
+  // Fetch total orders (existing code)
   useEffect(() => {
     const fetchTotalOrders = async () => {
       try {
@@ -14,13 +16,30 @@ export default function HeroBanner() {
           "https://nepcart-backend.onrender.com/api/product/total-orders"
         );
         setTotalOrders(res.data.totalOrders);
-        console.log(res);
       } catch (err) {
         console.error("Error fetching total orders:", err);
       }
     };
     fetchTotalOrders();
   }, []);
+
+  // Fetch updates when modal opens
+  useEffect(() => {
+    if (showModal) {
+      const fetchUpdates = async () => {
+        setLoading(true);
+        try {
+          const res = await axios.get("https://admin-server-2aht.onrender.com/api/extra");
+          setUpdates(res.data); // assuming res.data is an array of updates
+        } catch (err) {
+          console.error("Error fetching updates:", err);
+        } finally {
+          setLoading(false);
+        }
+      };
+      fetchUpdates();
+    }
+  }, [showModal]);
 
   return (
     <div className="relative overflow-hidden rounded-2xl p-8 mt-6 flex flex-col md:flex-row items-center justify-between bg-gradient-to-r from-orange-400 via-red-500 to-yellow-300 animate-gradient-x shadow-2xl">
@@ -39,7 +58,6 @@ export default function HeroBanner() {
 
         {/* Buttons Section */}
         <div className="flex flex-col items-center md:items-start mt-4 space-y-4">
-          {/* Download App Button */}
           <a
             href="/NepMart.apk"
             download
@@ -49,7 +67,6 @@ export default function HeroBanner() {
             Download App
           </a>
 
-          {/* See Updates Button */}
           <button
             onClick={() => setShowModal(true)}
             className="inline-flex items-center gap-2 bg-white text-gray-800 font-semibold px-5 py-3 rounded-xl shadow-lg hover:shadow-2xl hover:bg-gray-100 transition-all duration-200"
@@ -75,35 +92,34 @@ export default function HeroBanner() {
               <XMarkIcon className="w-6 h-6 text-gray-800" />
             </button>
             <h2 className="text-2xl font-bold mb-4">Latest Updates</h2>
+
             <div className="overflow-y-auto flex-1 space-y-4">
-              <div className="p-4 bg-gray-50 rounded-xl shadow-sm border border-gray-200">
-                <p className="text-gray-800 font-medium">
-                  • Uninstall the NepMart app and download the APK from the website again. We updated the app icon for better visibility.
-                </p>
-              </div>
-              <div className="p-4 bg-gray-50 rounded-xl shadow-sm border border-gray-200">
-                <p className="text-gray-800 font-medium">
-                  • Demo update: New app icon and minor performance improvements.
-                </p>
-              </div>
-              {/* You can add more updates here */}
+              {loading ? (
+                <p className="text-gray-600">Loading updates...</p>
+              ) : updates.length === 0 ? (
+                <p className="text-gray-600">No updates available.</p>
+              ) : (
+                updates.map((update, index) => (
+                  <div
+                    key={index}
+                    className="p-4 bg-gray-50 rounded-xl shadow-sm border border-gray-200"
+                  >
+                    <p className="text-gray-800 font-medium">
+                      • {update.message || update.text || update.title}
+                    </p>
+                  </div>
+                ))
+              )}
             </div>
           </div>
         </div>
       )}
 
-      {/* Optional Gradient Animation */}
       <style jsx>{`
         @keyframes gradient-x {
-          0% {
-            background-position: 0% 50%;
-          }
-          50% {
-            background-position: 100% 50%;
-          }
-          100% {
-            background-position: 0% 50%;
-          }
+          0% { background-position: 0% 50%; }
+          50% { background-position: 100% 50%; }
+          100% { background-position: 0% 50%; }
         }
         .animate-gradient-x {
           background-size: 200% 200%;
