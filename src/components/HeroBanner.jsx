@@ -32,7 +32,8 @@ export default function HeroBanner() {
           const res = await axios.get(
             "https://admin-server-2aht.onrender.com/api/extra/update"
           );
-          setUpdates(res.data); // assuming res.data is an array of updates
+          console.log("Fetched updates:", res.data);
+          setUpdates(res.data);
         } catch (err) {
           console.error("Error fetching updates:", err);
         } finally {
