@@ -5,10 +5,10 @@ import axios from "axios";
 export default function HeroBanner() {
   const [totalOrders, setTotalOrders] = useState(0);
   const [showModal, setShowModal] = useState(false);
-  const [updates, setUpdates] = useState([]); // store updates from API
+  const [updates, setUpdates] = useState([]);
   const [loading, setLoading] = useState(false);
 
-  // Fetch total orders (existing code)
+  // Fetch total orders
   useEffect(() => {
     const fetchTotalOrders = async () => {
       try {
@@ -32,7 +32,6 @@ export default function HeroBanner() {
           const res = await axios.get(
             "https://admin-server-2aht.onrender.com/api/extra/update"
           );
-          console.log("Fetched updates:", res.data);
           setUpdates(res.data);
         } catch (err) {
           console.error("Error fetching updates:", err);
@@ -43,6 +42,12 @@ export default function HeroBanner() {
       fetchUpdates();
     }
   }, [showModal]);
+
+  // Format date nicely
+  const formatDate = (isoDate) => {
+    const date = new Date(isoDate);
+    return date.toLocaleString(); // e.g., "10/15/2025, 3:59:08 PM"
+  };
 
   return (
     <div className="relative overflow-hidden rounded-2xl p-8 mt-6 flex flex-col md:flex-row items-center justify-between bg-gradient-to-r from-orange-400 via-red-500 to-yellow-300 animate-gradient-x shadow-2xl">
@@ -101,14 +106,13 @@ export default function HeroBanner() {
               ) : updates.length === 0 ? (
                 <p className="text-gray-600">No updates available.</p>
               ) : (
-                updates.map((update, index) => (
+                updates.map((update) => (
                   <div
-                    key={index}
+                    key={update._id}
                     className="p-4 bg-gray-50 rounded-xl shadow-sm border border-gray-200"
                   >
-                    <p className="text-gray-800 font-medium">
-                      • {update.message || update.text || update.title}
-                    </p>
+                    <p className="text-gray-800 font-medium">{update.msg}</p>
+                    <p className="text-gray-500 text-sm mt-1">{formatDate(update.createdAt)}</p>
                   </div>
                 ))
               )}
