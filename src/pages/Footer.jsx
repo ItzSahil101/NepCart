@@ -11,7 +11,7 @@ import {
 
 export default function Footer() {
   return (
-    <div className="flex flex-col min-h-screen bg-white text-black">
+    <div className="flex flex-col min-h-screen bg-white text-black mt-11">
       {/* Top Section */}
       <div className="flex items-center justify-between px-10 py-20 bg-white flex-grow">
         <div className="text-left">

@@ -180,30 +180,44 @@ const Profile = () => {
 
   // --- Framer Motion Variants ---
   const cardVariants = {
-    hover: { scale: 1.03, rotateX: 3, rotateY: 3, boxShadow: "0px 25px 50px rgba(0,0,0,0.2)" },
+    hover: { scale: 1.03, rotateX: 3, rotateY: 3, boxShadow: "0px 25px 50px rgba(0,0,0,0.3)" },
   };
 
   const buttonVariants = {
-    hover: { scale: 1.06, boxShadow: "0px 10px 25px rgba(0,0,0,0.3)" },
+    hover: { scale: 1.08, boxShadow: "0px 10px 30px rgba(0,0,0,0.4)" },
   };
 
   const glowVariants = {
-    hover: { scale: 1.1, rotate: [0, 5, -5, 0], transition: { yoyo: Infinity, duration: 1 } },
+    hover: { scale: 1.15, rotate: [0, 10, -10, 0], transition: { yoyo: Infinity, duration: 1 } },
   };
 
   return (
-    <div className="min-h-screen font-poppins text-gray-800 relative bg-gradient-to-b from-orange-50 to-white overflow-x-hidden">
+    <div className="min-h-screen font-poppins text-gray-800 relative overflow-x-hidden"
+         style={{
+           background: "linear-gradient(135deg, #f9d423, #ff4e50, #24c6dc, #514a9d)",
+           backgroundSize: "400% 400%",
+           animation: "gradientBG 15s ease infinite"
+         }}>
+      <style>
+        {`@keyframes gradientBG {
+            0% {background-position: 0% 50%;}
+            50% {background-position: 100% 50%;}
+            100% {background-position: 0% 50%;}
+        }`}
+      </style>
+
       {/* Header */}
       <motion.div
-        initial={{ opacity: 0, y: -40 }}
+        initial={{ opacity: 0, y: -50 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.7 }}
-        className="text-center py-12"
+        transition={{ duration: 0.8 }}
+        className="text-center py-14 px-4"
       >
-        <h1 className="text-5xl md:text-6xl font-extrabold tracking-wide bg-gradient-to-r from-orange-500 via-red-500 to-pink-500 text-transparent bg-clip-text drop-shadow-lg">
-          My Profile <span className="text-pink-500">🥳</span>
+        <h1 className="text-5xl md:text-6xl font-extrabold tracking-widest text-transparent bg-clip-text"
+            style={{ backgroundImage: "linear-gradient(to right, #ff512f, #dd2476, #ffdd00, #00c6ff)", letterSpacing: "2px" }}>
+          My Profile <span className="animate-bounce inline-block">🥳</span>
         </h1>
-        <p className="mt-4 text-lg md:text-xl font-medium text-gray-600">
+        <p className="mt-4 text-lg md:text-xl font-semibold text-white drop-shadow-lg animate-pulse">
           Manage your account, orders & feedback in style ✨
         </p>
       </motion.div>
@@ -212,34 +226,34 @@ const Profile = () => {
         {/* User Card */}
         <motion.div
           className="col-span-1 flex flex-col gap-6 items-center lg:items-start"
-          initial={{ opacity: 0, x: -60 }}
+          initial={{ opacity: 0, x: -70 }}
           animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.7 }}
+          transition={{ duration: 0.8 }}
         >
           <motion.div
-            className="bg-gradient-to-br from-orange-200 via-pink-200 to-purple-200 p-8 rounded-3xl shadow-2xl border border-gray-200 flex flex-col items-center w-full transition-all duration-300 hover:scale-105"
+            className="bg-gradient-to-br from-pink-400 via-purple-400 to-blue-400 p-8 rounded-3xl shadow-2xl border border-white flex flex-col items-center w-full transition-all duration-300 hover:scale-105 hover:shadow-[0_0_60px_rgba(255,255,255,0.4)]"
           >
-            <motion.div className="text-blue-500 mb-5" variants={glowVariants} whileHover="hover">
+            <motion.div className="text-white mb-5" variants={glowVariants} whileHover="hover">
               <FaUserCircle size={100} />
             </motion.div>
-            <h2 className="text-3xl font-bold text-gray-900">{loggedInUser?.userName || "Loading..."}</h2>
-            <p className="text-gray-700 text-lg">{loggedInUser?.number || ""}</p>
+            <h2 className="text-3xl font-extrabold text-white">{loggedInUser?.userName || "Loading..."}</h2>
+            <p className="text-gray-100 text-lg">{loggedInUser?.number || ""}</p>
           </motion.div>
 
           <motion.img
             src={nebulaImg}
             alt="Nebula Background"
-            className="w-full h-60 object-cover rounded-2xl shadow-xl hidden lg:block"
+            className="w-full h-60 object-cover rounded-2xl shadow-2xl hidden lg:block"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            transition={{ delay: 0.3 }}
+            transition={{ delay: 0.4 }}
           />
         </motion.div>
 
-        {/* Orders */}
+        {/* Orders Section */}
         <div className="col-span-2">
           <motion.div
-            className="bg-white p-8 rounded-3xl shadow-2xl border border-gray-200"
+            className="bg-white/90 backdrop-blur-md p-8 rounded-3xl shadow-2xl border border-gray-200"
             initial={{ opacity: 0, y: 50 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7 }}
@@ -350,7 +364,7 @@ const Profile = () => {
       <div className="mt-16 grid grid-cols-1 md:grid-cols-2 gap-10 px-6 lg:px-16">
         {/* Top Customers */}
         <motion.div
-          className="bg-white p-8 rounded-3xl shadow-2xl border border-gray-200"
+          className="bg-white/90 backdrop-blur-md p-8 rounded-3xl shadow-2xl border border-gray-200"
           initial={{ opacity: 0, x: -50 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.7 }}
@@ -381,7 +395,7 @@ const Profile = () => {
 
         {/* Feedback */}
         <motion.div
-          className="bg-white p-8 rounded-3xl shadow-2xl border border-gray-200"
+          className="bg-white/90 backdrop-blur-md p-8 rounded-3xl shadow-2xl border border-gray-200"
           initial={{ opacity: 0, x: 50 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.7 }}
