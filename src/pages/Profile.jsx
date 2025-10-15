@@ -5,8 +5,8 @@ import { getUserFromCookie } from "../utils/getUserFromCookie";
 import Loader from "./Loader";
 import { motion, AnimatePresence } from "framer-motion";
 
-const nebulaImg =
-  "https://thumbs.dreamstime.com/b/success-banner-advertisement-concept-29237997.jpg";
+// Optional: use this for particle-like background or glowing effect
+const nebulaImg = "https://thumbs.dreamstime.com/b/success-banner-advertisement-concept-29237997.jpg";
 
 const Profile = () => {
   const [feedback, setFeedback] = useState("");
@@ -50,12 +50,8 @@ const Profile = () => {
         setLoggedInUser(user);
 
         const [res1, res2] = await Promise.all([
-          axios.get(
-            `https://nepcart-backend.onrender.com/purchase/user/${user._id}`
-          ),
-          axios.get(
-            `https://nepcart-backend.onrender.com/orderc/custom-orders/user/${user._id}`
-          ),
+          axios.get(`https://nepcart-backend.onrender.com/purchase/user/${user._id}`),
+          axios.get(`https://nepcart-backend.onrender.com/orderc/custom-orders/user/${user._id}`)
         ]);
 
         const normalOrders = res1.data.flatMap((purchase) =>
@@ -65,7 +61,7 @@ const Profile = () => {
             createdAt: purchase.createdAt,
             cancelTimeLeft: purchase.cancelTimeLeft,
             status: p.status || purchase.status || "Pending",
-            isCustom: false,
+            isCustom: false
           }))
         );
 
@@ -73,14 +69,14 @@ const Profile = () => {
           productId: {
             name: `Custom T-Shirt (${order.tshirtColor})`,
             url: order.imageUrl,
-            desc: `Color: ${order.tshirtColor}, Location: ${order.location}`,
+            desc: `Color: ${order.tshirtColor}, Location: ${order.location}`
           },
           quantity: 1,
           orderId: order._id,
           createdAt: order.createdAt,
           cancelTimeLeft: order.cancelTimeLeft,
           status: order.status || "Pending",
-          isCustom: true,
+          isCustom: true
         }));
 
         setOrders([...normalOrders, ...customOrders]);
@@ -99,20 +95,15 @@ const Profile = () => {
     const initializeTimers = () => {
       const now = Date.now();
       const timers = {};
-
       orders.forEach((order) => {
         if (!order.createdAt || !order.cancelTimeLeft) return;
-
         const createdAtMs = new Date(order.createdAt).getTime();
         const elapsedSeconds = (now - createdAtMs) / 1000;
         const timeLeft = order.cancelTimeLeft - elapsedSeconds;
-
         timers[order.orderId] = timeLeft > 0 ? Math.floor(timeLeft) : 0;
       });
-
       setCancelTimers(timers);
     };
-
     initializeTimers();
   }, [orders]);
 
@@ -121,7 +112,6 @@ const Profile = () => {
       setCancelTimers((prevTimers) => {
         const updatedTimers = {};
         let hasActiveTimer = false;
-
         for (const [orderId, secondsLeft] of Object.entries(prevTimers)) {
           if (secondsLeft > 0) {
             updatedTimers[orderId] = secondsLeft - 1;
@@ -130,15 +120,10 @@ const Profile = () => {
             updatedTimers[orderId] = 0;
           }
         }
-
-        if (!hasActiveTimer) {
-          clearInterval(interval);
-        }
-
+        if (!hasActiveTimer) clearInterval(interval);
         return updatedTimers;
       });
     }, 1000);
-
     return () => clearInterval(interval);
   }, []);
 
@@ -150,57 +135,40 @@ const Profile = () => {
 
   const handleFeedbackSubmit = async () => {
     if (!feedback.trim()) return alert("Please write something.");
-
     try {
       const user = await getUserFromCookie();
-      if (!user) {
-        alert("User not authenticated");
-        return;
-      }
-
+      if (!user) return alert("User not authenticated");
       const response = await axios.post(
         "https://nepcart-backend.onrender.com/api/feedback/postf",
-        {
-          message: feedback,
-          userName: user.userName,
-          number: user.number,
-        }
+        { message: feedback, userName: user.userName, number: user.number }
       );
-
       if (response.status === 201) {
-        alert("Feedback submitted successfully");
+        alert("Feedback submitted successfully 🎉");
         setFeedback("");
-      } else {
-        alert("Failed to submit feedback");
-      }
-    } catch (error) {
-      console.error("Feedback error:", error);
-      alert("Error submitting feedback.");
+      } else alert("Failed to submit feedback ❌");
+    } catch (err) {
+      console.error("Feedback error:", err);
+      alert("Error submitting feedback ❌");
     }
   };
 
   const handleCancelOrder = async (id, isCustom) => {
     const confirmCancel = window.confirm("Are you sure to cancel this order?");
     if (!confirmCancel) return;
-
     try {
       setCancellingOrderId(id);
       const url = isCustom
         ? `https://nepcart-backend.onrender.com/orderc/${id}/cancel`
         : `https://nepcart-backend.onrender.com/purchase/${id}/cancel`;
-
       const res = await axios.put(url);
-
       if (res.status === 200) {
         alert("Order cancelled ✅");
         setOrders((prev) => prev.filter((item) => item.orderId !== id));
         window.location.reload();
-      } else {
-        alert(res.data.message || "Cancel failed ❌");
-      }
+      } else alert(res.data.message || "Cancel failed ❌");
     } catch (err) {
       console.error("Cancel error:", err);
-      alert("Error cancelling order");
+      alert("Error cancelling order ❌");
     } finally {
       setCancellingOrderId(null);
     }
@@ -213,49 +181,60 @@ const Profile = () => {
 
   // --- Framer Motion Variants ---
   const cardVariants = {
-    hover: { scale: 1.03, y: -5, boxShadow: "0px 15px 35px rgba(0,0,0,0.2)" },
+    hover: { scale: 1.04, rotateX: 4, rotateY: 4, boxShadow: "0px 25px 50px rgba(0,0,0,0.25)" },
   };
 
   const buttonVariants = {
-    hover: { scale: 1.05, boxShadow: "0px 10px 20px rgba(0,0,0,0.25)" },
+    hover: { scale: 1.06, boxShadow: "0px 10px 25px rgba(0,0,0,0.3)" },
+  };
+
+  const glowVariants = {
+    hover: { scale: 1.1, rotate: [0, 5, -5, 0], transition: { yoyo: Infinity, duration: 1 } },
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-orange-50 to-white px-6 py-10 md:px-16 font-sans text-gray-800">
+    <div className="min-h-screen font-poppins text-gray-800 relative bg-gradient-to-b from-orange-50 to-white overflow-x-hidden">
       {/* Header */}
-      <motion.div initial={{ opacity: 0, y: -30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
-        <h1 className="text-5xl font-bold text-gradient bg-clip-text text-transparent bg-gradient-to-r from-orange-500 to-red-500 drop-shadow-md tracking-tight">
+      <motion.div
+        initial={{ opacity: 0, y: -40 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.7 }}
+        className="text-center mb-12"
+      >
+        <h1 className="text-5xl md:text-6xl font-extrabold bg-gradient-to-r from-orange-500 via-red-500 to-pink-500 text-transparent bg-clip-text drop-shadow-lg">
           My Profile 🥳
         </h1>
-        <p className="text-blue-600 mt-2 text-lg sm:text-base">
-          Manage your account, orders, and feedback in one place
+        <p className="mt-3 text-lg md:text-xl text-gray-600">
+          Manage your account, orders & feedback in style ✨
         </p>
       </motion.div>
 
-      <div className="mt-10 grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 px-4 lg:px-16">
         {/* User Card */}
         <motion.div
-          className="col-span-1 flex flex-col gap-6"
-          initial={{ opacity: 0, x: -50 }}
+          className="col-span-1 flex flex-col gap-6 items-center lg:items-start"
+          initial={{ opacity: 0, x: -60 }}
           animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.6 }}
+          transition={{ duration: 0.7 }}
         >
           <motion.div
-            className="bg-white p-6 rounded-3xl shadow-2xl border border-gray-200"
-            whileHover={{ y: -5, scale: 1.02, boxShadow: "0px 20px 40px rgba(0,0,0,0.15)" }}
+            className="bg-gradient-to-br from-orange-200 via-pink-200 to-purple-200 p-6 rounded-3xl shadow-2xl border border-gray-200 flex flex-col items-center w-full"
+            whileHover={{ scale: 1.05, rotateY: 10 }}
           >
-            <div className="flex items-center gap-4">
-              <FaUserCircle size={70} className="text-blue-400" />
-              <div>
-                <h2 className="text-2xl font-bold">{loggedInUser?.userName || "Loading..."}</h2>
-                <p className="text-sm text-gray-500">{loggedInUser?.number || ""}</p>
-              </div>
-            </div>
+            <motion.div
+              className="text-blue-500 mb-4"
+              variants={glowVariants}
+              whileHover="hover"
+            >
+              <FaUserCircle size={90} />
+            </motion.div>
+            <h2 className="text-2xl font-bold text-gray-900">{loggedInUser?.userName || "Loading..."}</h2>
+            <p className="text-gray-700">{loggedInUser?.number || ""}</p>
           </motion.div>
           <motion.img
             src={nebulaImg}
-            alt="Space filler"
-            className="w-full h-52 object-cover rounded-2xl shadow-xl hidden lg:block"
+            alt="Nebula Background"
+            className="w-full h-56 object-cover rounded-2xl shadow-xl hidden lg:block"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.3 }}
@@ -268,16 +247,13 @@ const Profile = () => {
             className="bg-white p-8 rounded-3xl shadow-2xl border border-gray-200"
             initial={{ opacity: 0, y: 50 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
+            transition={{ duration: 0.7 }}
           >
             <h3 className="text-2xl font-bold text-orange-500 mb-3">
-              Order Tracking{" "}
-              <span className="text-gray-500 font-medium text-base">
-                (We’ll call you soon)
-              </span>
+              Order Tracking <span className="text-gray-500 font-medium text-base">(We’ll call you soon)</span>
             </h3>
             <p className="text-gray-600 mb-6 text-sm sm:text-base">
-              We will call you to confirm your order by asking for Rs.100 as an advance payment.
+              We will call you to confirm your order by asking for Rs.100 as advance payment 💸
             </p>
 
             <div className="space-y-5">
@@ -308,16 +284,14 @@ const Profile = () => {
                         >
                           {order.productId?.name || "Unnamed Product"}
                         </h4>
-
                         <motion.button
                           onClick={() => openPreview(order)}
-                          className="px-5 py-2 rounded-xl bg-blue-500 text-white font-semibold"
+                          className="px-5 py-2 rounded-xl bg-gradient-to-r from-orange-400 via-pink-400 to-purple-500 text-white font-semibold shadow-md"
                           variants={buttonVariants}
                           whileHover="hover"
                         >
                           Preview Order
                         </motion.button>
-
                         <div className="mt-3 space-y-1 text-sm">
                           <p>
                             <span className="font-medium text-gray-700">Status:</span>{" "}
@@ -330,13 +304,11 @@ const Profile = () => {
                           {canCancel && (
                             <p className="text-gray-600">
                               Time left to cancel:{" "}
-                              <span className="font-semibold text-gray-900">
-                                {formatTime(timeLeft)}
-                              </span>
+                              <span className="font-semibold text-gray-900">{formatTime(timeLeft)}</span>
                             </p>
                           )}
                           {!canCancel && order.status !== "Cancelled" && (
-                            <p className="text-red-500 font-semibold">Can't Cancel</p>
+                            <p className="text-red-500 font-semibold">Can't Cancel ❌</p>
                           )}
                         </div>
                       </div>
@@ -355,10 +327,8 @@ const Profile = () => {
                             <Loader />
                           ) : (
                             <motion.button
-                              onClick={() =>
-                                handleCancelOrder(order.orderId, order.isCustom)
-                              }
-                              className="px-4 py-2 text-sm font-semibold rounded-xl bg-orange-500 text-white shadow-md"
+                              onClick={() => handleCancelOrder(order.orderId, order.isCustom)}
+                              className="px-4 py-2 text-sm font-semibold rounded-xl bg-gradient-to-r from-red-400 via-orange-500 to-yellow-400 text-white shadow-md"
                               variants={buttonVariants}
                               whileHover="hover"
                             >
@@ -384,15 +354,15 @@ const Profile = () => {
       </div>
 
       {/* Bottom Section */}
-      <div className="mt-10 grid grid-cols-1 md:grid-cols-2 gap-8">
+      <div className="mt-10 grid grid-cols-1 md:grid-cols-2 gap-8 px-4 lg:px-16">
         {/* Top Customers */}
         <motion.div
           className="bg-white p-6 rounded-3xl shadow-2xl border border-gray-200"
           initial={{ opacity: 0, x: -50 }}
           animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.6 }}
+          transition={{ duration: 0.7 }}
         >
-          <h3 className="text-xl font-bold text-blue-500 mb-4">Top Customers</h3>
+          <h3 className="text-xl font-bold text-blue-500 mb-4">Top Customers 🏆</h3>
           {loadingTopUsers ? (
             <p>Loading top customers...</p>
           ) : topUsersError ? (
@@ -402,9 +372,14 @@ const Profile = () => {
           ) : (
             <ul className="space-y-3">
               {topUsers.map((user, index) => (
-                <li key={index} className="flex justify-between">
-                  <span className="font-medium text-gray-800">{user.userName}</span>
-                  <span className="text-sm text-gray-600">{user.purchaseProducts} items</span>
+                <li
+                  key={index}
+                  className={`flex justify-between ${
+                    index === 0 ? "text-yellow-500 font-bold" : ""
+                  }`}
+                >
+                  <span>{user.userName}</span>
+                  <span className="text-gray-600">{user.purchaseProducts} items</span>
                 </li>
               ))}
             </ul>
@@ -416,9 +391,9 @@ const Profile = () => {
           className="bg-white p-6 rounded-3xl shadow-2xl border border-gray-200"
           initial={{ opacity: 0, x: 50 }}
           animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.6 }}
+          transition={{ duration: 0.7 }}
         >
-          <h3 className="text-xl font-bold text-blue-500 mb-4">Feedback & Suggestions</h3>
+          <h3 className="text-xl font-bold text-blue-500 mb-4">Feedback & Suggestions 💡</h3>
           <textarea
             value={feedback}
             onChange={(e) => setFeedback(e.target.value)}
@@ -428,7 +403,7 @@ const Profile = () => {
           ></textarea>
           <motion.button
             onClick={handleFeedbackSubmit}
-            className="mt-4 px-6 py-2 bg-orange-500 text-white rounded-xl font-semibold shadow-md"
+            className="mt-4 px-6 py-2 bg-gradient-to-r from-orange-400 via-pink-400 to-purple-500 text-white rounded-xl font-semibold shadow-md"
             variants={buttonVariants}
             whileHover="hover"
           >

@@ -107,7 +107,7 @@ return () => document.removeEventListener("mousedown", handleOutsideProfileClick
         <div className="flex items-center space-x-2 shrink-0">
           <FaShoppingCart className="text-2xl" />
           <Link className="text-xl font-bold tracking-wide font-serif whitespace-nowrap" to="/">
-            NepCart
+            NepMart
           </Link>
         </div>
 
