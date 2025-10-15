@@ -5,7 +5,6 @@ import { getUserFromCookie } from "../utils/getUserFromCookie";
 import Loader from "./Loader";
 import { motion, AnimatePresence } from "framer-motion";
 
-// Optional: use this for particle-like background or glowing effect
 const nebulaImg = "https://thumbs.dreamstime.com/b/success-banner-advertisement-concept-29237997.jpg";
 
 const Profile = () => {
@@ -181,7 +180,7 @@ const Profile = () => {
 
   // --- Framer Motion Variants ---
   const cardVariants = {
-    hover: { scale: 1.04, rotateX: 4, rotateY: 4, boxShadow: "0px 25px 50px rgba(0,0,0,0.25)" },
+    hover: { scale: 1.03, rotateX: 3, rotateY: 3, boxShadow: "0px 25px 50px rgba(0,0,0,0.2)" },
   };
 
   const buttonVariants = {
@@ -199,17 +198,17 @@ const Profile = () => {
         initial={{ opacity: 0, y: -40 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.7 }}
-        className="text-center mb-12"
+        className="text-center py-12"
       >
-        <h1 className="text-5xl md:text-6xl font-extrabold bg-gradient-to-r from-orange-500 via-red-500 to-pink-500 text-transparent bg-clip-text drop-shadow-lg">
-          My Profile 🥳
+        <h1 className="text-5xl md:text-6xl font-extrabold tracking-wide bg-gradient-to-r from-orange-500 via-red-500 to-pink-500 text-transparent bg-clip-text drop-shadow-lg">
+          My Profile <span className="text-pink-500">🥳</span>
         </h1>
-        <p className="mt-3 text-lg md:text-xl text-gray-600">
+        <p className="mt-4 text-lg md:text-xl font-medium text-gray-600">
           Manage your account, orders & feedback in style ✨
         </p>
       </motion.div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 px-4 lg:px-16">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-10 px-6 lg:px-16">
         {/* User Card */}
         <motion.div
           className="col-span-1 flex flex-col gap-6 items-center lg:items-start"
@@ -218,23 +217,19 @@ const Profile = () => {
           transition={{ duration: 0.7 }}
         >
           <motion.div
-            className="bg-gradient-to-br from-orange-200 via-pink-200 to-purple-200 p-6 rounded-3xl shadow-2xl border border-gray-200 flex flex-col items-center w-full"
-            whileHover={{ scale: 1.05, rotateY: 10 }}
+            className="bg-gradient-to-br from-orange-200 via-pink-200 to-purple-200 p-8 rounded-3xl shadow-2xl border border-gray-200 flex flex-col items-center w-full transition-all duration-300 hover:scale-105"
           >
-            <motion.div
-              className="text-blue-500 mb-4"
-              variants={glowVariants}
-              whileHover="hover"
-            >
-              <FaUserCircle size={90} />
+            <motion.div className="text-blue-500 mb-5" variants={glowVariants} whileHover="hover">
+              <FaUserCircle size={100} />
             </motion.div>
-            <h2 className="text-2xl font-bold text-gray-900">{loggedInUser?.userName || "Loading..."}</h2>
-            <p className="text-gray-700">{loggedInUser?.number || ""}</p>
+            <h2 className="text-3xl font-bold text-gray-900">{loggedInUser?.userName || "Loading..."}</h2>
+            <p className="text-gray-700 text-lg">{loggedInUser?.number || ""}</p>
           </motion.div>
+
           <motion.img
             src={nebulaImg}
             alt="Nebula Background"
-            className="w-full h-56 object-cover rounded-2xl shadow-xl hidden lg:block"
+            className="w-full h-60 object-cover rounded-2xl shadow-xl hidden lg:block"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.3 }}
@@ -249,10 +244,10 @@ const Profile = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7 }}
           >
-            <h3 className="text-2xl font-bold text-orange-500 mb-3">
+            <h3 className="text-2xl font-bold text-orange-500 mb-4">
               Order Tracking <span className="text-gray-500 font-medium text-base">(We’ll call you soon)</span>
             </h3>
-            <p className="text-gray-600 mb-6 text-sm sm:text-base">
+            <p className="text-gray-600 mb-8 text-sm sm:text-base">
               We will call you to confirm your order by asking for Rs.100 as advance payment 💸
             </p>
 
@@ -269,30 +264,28 @@ const Profile = () => {
                   return (
                     <motion.div
                       key={`${order.orderId}-${i}`}
-                      className={`flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 p-5 rounded-2xl border shadow-md transition-all duration-200 ${
-                        order.status === "Cancelled"
-                          ? "bg-red-50 border-red-200"
-                          : "bg-gray-50 border-gray-200"
+                      className={`flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 p-6 rounded-2xl border shadow-md transition-all duration-300 ${
+                        order.status === "Cancelled" ? "bg-red-50 border-red-200" : "bg-gray-50 border-gray-200"
                       }`}
                       variants={cardVariants}
                       whileHover="hover"
                     >
                       <div className="flex-1">
                         <h4
-                          className="font-semibold text-lg text-blue-600 underline cursor-pointer mb-2"
+                          className="font-semibold text-lg text-blue-600 underline cursor-pointer mb-3"
                           onClick={() => openPreview(order)}
                         >
                           {order.productId?.name || "Unnamed Product"}
                         </h4>
                         <motion.button
                           onClick={() => openPreview(order)}
-                          className="px-5 py-2 rounded-xl bg-gradient-to-r from-orange-400 via-pink-400 to-purple-500 text-white font-semibold shadow-md"
+                          className="px-5 py-2 rounded-xl bg-gradient-to-r from-orange-400 via-pink-400 to-purple-500 text-white font-semibold shadow-lg"
                           variants={buttonVariants}
                           whileHover="hover"
                         >
                           Preview Order
                         </motion.button>
-                        <div className="mt-3 space-y-1 text-sm">
+                        <div className="mt-4 space-y-1 text-sm">
                           <p>
                             <span className="font-medium text-gray-700">Status:</span>{" "}
                             <span className="font-semibold">{order.status}</span>
@@ -328,7 +321,7 @@ const Profile = () => {
                           ) : (
                             <motion.button
                               onClick={() => handleCancelOrder(order.orderId, order.isCustom)}
-                              className="px-4 py-2 text-sm font-semibold rounded-xl bg-gradient-to-r from-red-400 via-orange-500 to-yellow-400 text-white shadow-md"
+                              className="px-4 py-2 text-sm font-semibold rounded-xl bg-gradient-to-r from-red-400 via-orange-500 to-yellow-400 text-white shadow-lg"
                               variants={buttonVariants}
                               whileHover="hover"
                             >
@@ -354,15 +347,15 @@ const Profile = () => {
       </div>
 
       {/* Bottom Section */}
-      <div className="mt-10 grid grid-cols-1 md:grid-cols-2 gap-8 px-4 lg:px-16">
+      <div className="mt-16 grid grid-cols-1 md:grid-cols-2 gap-10 px-6 lg:px-16">
         {/* Top Customers */}
         <motion.div
-          className="bg-white p-6 rounded-3xl shadow-2xl border border-gray-200"
+          className="bg-white p-8 rounded-3xl shadow-2xl border border-gray-200"
           initial={{ opacity: 0, x: -50 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.7 }}
         >
-          <h3 className="text-xl font-bold text-blue-500 mb-4">Top Customers 🏆</h3>
+          <h3 className="text-xl font-bold text-blue-500 mb-5">Top Customers 🏆</h3>
           {loadingTopUsers ? (
             <p>Loading top customers...</p>
           ) : topUsersError ? (
@@ -374,7 +367,7 @@ const Profile = () => {
               {topUsers.map((user, index) => (
                 <li
                   key={index}
-                  className={`flex justify-between ${
+                  className={`flex justify-between items-center ${
                     index === 0 ? "text-yellow-500 font-bold" : ""
                   }`}
                 >
@@ -388,12 +381,12 @@ const Profile = () => {
 
         {/* Feedback */}
         <motion.div
-          className="bg-white p-6 rounded-3xl shadow-2xl border border-gray-200"
+          className="bg-white p-8 rounded-3xl shadow-2xl border border-gray-200"
           initial={{ opacity: 0, x: 50 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.7 }}
         >
-          <h3 className="text-xl font-bold text-blue-500 mb-4">Feedback & Suggestions 💡</h3>
+          <h3 className="text-xl font-bold text-blue-500 mb-5">Feedback & Suggestions 💡</h3>
           <textarea
             value={feedback}
             onChange={(e) => setFeedback(e.target.value)}
@@ -403,7 +396,7 @@ const Profile = () => {
           ></textarea>
           <motion.button
             onClick={handleFeedbackSubmit}
-            className="mt-4 px-6 py-2 bg-gradient-to-r from-orange-400 via-pink-400 to-purple-500 text-white rounded-xl font-semibold shadow-md"
+            className="mt-5 px-6 py-3 bg-gradient-to-r from-orange-400 via-pink-400 to-purple-500 text-white rounded-xl font-semibold shadow-lg"
             variants={buttonVariants}
             whileHover="hover"
           >
@@ -416,13 +409,13 @@ const Profile = () => {
       <AnimatePresence>
         {showModal && selectedProduct && (
           <motion.div
-            className="fixed inset-0 z-50 bg-black/60 flex items-center justify-center px-4"
+            className="fixed inset-0 z-50 bg-black/70 flex items-center justify-center px-4"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
           >
             <motion.div
-              className="bg-white w-full max-w-lg rounded-2xl shadow-2xl p-6 relative"
+              className="bg-white w-full max-w-lg rounded-3xl shadow-2xl p-6 relative"
               initial={{ scale: 0.8 }}
               animate={{ scale: 1 }}
               exit={{ scale: 0.8 }}
@@ -430,7 +423,7 @@ const Profile = () => {
             >
               <button
                 onClick={() => setShowModal(false)}
-                className="absolute top-3 right-3 text-gray-500 hover:text-red-600 text-2xl font-bold"
+                className="absolute top-3 right-3 text-gray-500 hover:text-red-600 text-3xl font-bold"
               >
                 &times;
               </button>
@@ -439,22 +432,12 @@ const Profile = () => {
                 <img
                   src={selectedProduct.productId.url}
                   alt={selectedProduct.productId.name}
-                  className="w-full h-52 object-contain mx-auto rounded-xl mb-4"
+                  className="w-full h-60 object-cover rounded-2xl mb-4"
                 />
               ) : (
-                <div className="w-full h-52 bg-gray-200 flex items-center justify-center rounded-xl mb-4">
-                  No Image
-                </div>
+                <p className="text-gray-500">No image available</p>
               )}
-              <h3 className="text-xl font-semibold mb-1">
-                {selectedProduct.productId?.name || "Unnamed Product"}
-              </h3>
-              <p className="text-sm text-gray-700 mb-1">
-                Quantity: <strong>{selectedProduct.quantity}</strong>
-              </p>
-              <p className="text-sm text-gray-600">
-                {selectedProduct.productId?.desc || "No description available."}
-              </p>
+              <p className="text-gray-700">{selectedProduct.productId?.desc || "No description"}</p>
             </motion.div>
           </motion.div>
         )}
