@@ -1,6 +1,6 @@
 // src/components/HeroBanner.jsx
 import React, { useEffect, useState } from "react";
-import { ShoppingCartIcon, ArrowDownTrayIcon, UserIcon, XMarkIcon } from "@heroicons/react/24/outline";
+import { ShoppingCartIcon, ArrowDownTrayIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import axios from "axios";
 
 export default function HeroBanner() {
@@ -37,22 +37,26 @@ export default function HeroBanner() {
           Grab your favorites before they run out!
         </p>
 
-        <a
-          href="/NepMart.apk"
-          download
-          className="inline-flex items-center gap-2 bg-white text-orange-600 font-bold px-5 py-3 rounded-xl shadow-lg hover:bg-orange-100 active:scale-95 transition-transform duration-200 mt-4"
-        >
-          <ArrowDownTrayIcon className="w-6 h-6" />
-          Download App
-        </a>
+        {/* Buttons Section */}
+        <div className="flex flex-col items-center md:items-start mt-4 space-y-4">
+          {/* Download App Button */}
+          <a
+            href="/NepMart.apk"
+            download
+            className="inline-flex items-center gap-2 bg-white text-orange-600 font-bold px-5 py-3 rounded-xl shadow-lg hover:bg-orange-100 active:scale-95 transition-transform duration-200"
+          >
+            <ArrowDownTrayIcon className="w-6 h-6" />
+            Download App
+          </a>
 
-        {/* See Updates Button */}
-        <button
-          onClick={() => setShowModal(true)}
-          className="absolute bottom-0 left-0 mb-4 ml-4 px-5 py-3 bg-white text-gray-800 font-semibold rounded-xl shadow-lg hover:shadow-2xl hover:bg-gray-100 transition-all duration-200"
-        >
-          See Updates
-        </button>
+          {/* See Updates Button */}
+          <button
+            onClick={() => setShowModal(true)}
+            className="inline-flex items-center gap-2 bg-white text-gray-800 font-semibold px-5 py-3 rounded-xl shadow-lg hover:shadow-2xl hover:bg-gray-100 transition-all duration-200"
+          >
+            See Updates
+          </button>
+        </div>
       </div>
 
       {/* Icon Section */}
