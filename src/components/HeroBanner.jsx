@@ -29,7 +29,9 @@ export default function HeroBanner() {
       const fetchUpdates = async () => {
         setLoading(true);
         try {
-          const res = await axios.get("https://admin-server-2aht.onrender.com/api/extra");
+          const res = await axios.get(
+            "https://admin-server-2aht.onrender.com/api/extra/update"
+          );
           setUpdates(res.data); // assuming res.data is an array of updates
         } catch (err) {
           console.error("Error fetching updates:", err);
@@ -43,7 +45,6 @@ export default function HeroBanner() {
 
   return (
     <div className="relative overflow-hidden rounded-2xl p-8 mt-6 flex flex-col md:flex-row items-center justify-between bg-gradient-to-r from-orange-400 via-red-500 to-yellow-300 animate-gradient-x shadow-2xl">
-
       {/* Text Section */}
       <div className="text-center md:text-left space-y-4 relative">
         <h1 className="text-white text-4xl sm:text-5xl md:text-6xl font-extrabold drop-shadow-lg uppercase tracking-wide">
