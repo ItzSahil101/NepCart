@@ -64,6 +64,7 @@ export default function AuthPage() {
             <img
               src="/assets/images/main.jpg"
               className="w-full h-[25vh] object-cover rounded-lg mb-6"
+              alt="Login Banner"
             />
             <div className="flex justify-center mb-4">
               <div className="w-14 h-14 rounded-full bg-orange-500 flex items-center justify-center">
