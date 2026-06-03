@@ -7,6 +7,10 @@ import {
   FaListUl,
   FaBook,
   FaUtensils,
+  FaPumpSoap, 
+  FaSpa,
+  FaSprayCan,
+  FaEye 
 } from "react-icons/fa";
 
 export default function CategoryFilter() {
@@ -70,13 +74,13 @@ export default function CategoryFilter() {
       text: "text-purple-700 font-semibold",
       keyword: "book",
     },
-    {
-      name: "Cosmetic",
-      icon: <FaUtensils className="w-6 h-6 text-white" />,
-      bg: "bg-green-600",
-      text: "text-green-700 font-semibold",
-      keyword: "cosmetic",
-    },
+    { 
+      name: 'Cosmetic', 
+      icon: <FaPumpSoap className="w-6 h-6 text-white" />, 
+      bg: 'bg-green-600', 
+      text: 'text-green-700 font-semibold', 
+      keyword: 'cosmetic' 
+    }    
   ];
 
   return (
