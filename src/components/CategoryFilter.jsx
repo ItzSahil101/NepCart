@@ -71,11 +71,11 @@ export default function CategoryFilter() {
       keyword: "book",
     },
     {
-      name: "Foods + Drinks",
+      name: "Cosmetic",
       icon: <FaUtensils className="w-6 h-6 text-white" />,
       bg: "bg-green-600",
       text: "text-green-700 font-semibold",
-      keyword: "food",
+      keyword: "cosmetic",
     },
   ];
 
